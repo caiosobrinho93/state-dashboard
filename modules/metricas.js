@@ -42,7 +42,7 @@ const MetricasModule = {
     container.innerHTML = `
       <div class="kpi-grid">
         <div class="kpi-card">
-          <div class="kpi-icon orange">${Utils.icon('financeiro', 20)}</div>
+          <div class="kpi-icon blue">${Utils.icon('financeiro', 20)}</div>
           <div class="kpi-label">Ticket Médio</div>
           <div class="kpi-value">${Utils.currency(stats.ticketMedio)}</div>
         </div>
@@ -145,7 +145,7 @@ const MetricasModule = {
 
     // Charts
     setTimeout(() => {
-      const colors = ['#e85d04', '#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ec4899'];
+      const colors = ['#d4af37', '#00ffaa', '#00f2ff', '#ffcc00', '#8b5cf6', '#ec4899'];
 
       // Receita donut
       const recCanvas = document.getElementById('chart-receita-cat');

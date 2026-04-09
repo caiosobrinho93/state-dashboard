@@ -138,7 +138,7 @@ const DashboardModule = {
       <!-- KPIs -->
       <div class="kpi-grid">
         <div class="kpi-card">
-          <div class="kpi-icon orange">${Utils.icon('financeiro', 20)}</div>
+          <div class="kpi-icon blue">${Utils.icon('financeiro', 20)}</div>
           <div class="kpi-label">Receita Total</div>
           <div class="kpi-value">${Utils.currency(stats.receitas)}</div>
         </div>

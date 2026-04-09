@@ -7,32 +7,33 @@
 
 /* ── Reset & Variables ── */
 :root {
-  --bg: #09090b;
-  --surface: #131316;
-  --surface-hover: #1a1a1f;
-  --surface-active: #222228;
-  --border: #27272a;
-  --border-light: #333338;
-  --accent: #e85d04;
-  --accent-hover: #ff6d1a;
-  --accent-muted: rgba(232, 93, 4, 0.12);
-  --accent-subtle: rgba(232, 93, 4, 0.06);
-  --text: #fafafa;
-  --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
-  --success: #10b981;
-  --success-muted: rgba(16, 185, 129, 0.12);
-  --warning: #f59e0b;
-  --warning-muted: rgba(245, 158, 11, 0.12);
-  --danger: #ef4444;
-  --danger-muted: rgba(239, 68, 68, 0.12);
-  --info: #3b82f6;
-  --info-muted: rgba(59, 130, 246, 0.12);
-  --sidebar-w: 256px;
-  --header-h: 64px;
-  --radius: 8px;
-  --radius-lg: 12px;
-  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --bg: #000000;
+  --surface: #0a0a0a;
+  --surface-hover: #111111;
+  --surface-active: #1a1a1a;
+  --border: #1a1a1a;
+  --border-light: #222222;
+  --accent: #d4af37; /* Gold */
+  --accent-hover: #f1e5ac;
+  --accent-muted: rgba(212, 175, 55, 0.1);
+  --accent-subtle: rgba(212, 175, 55, 0.05);
+  --neon: #00f2ff; /* Neon Cyan */
+  --text: #ffffff;
+  --text-secondary: #999999;
+  --text-muted: #555555;
+  --success: #00ffaa; /* Neon Green */
+  --success-muted: rgba(0, 255, 170, 0.1);
+  --warning: #ffcc00;
+  --warning-muted: rgba(255, 204, 0, 0.1);
+  --danger: #ff4444;
+  --danger-muted: rgba(255, 68, 68, 0.1);
+  --info: var(--neon);
+  --info-muted: rgba(0, 242, 255, 0.1);
+  --sidebar-w: 240px;
+  --header-h: 60px;
+  --radius: 6px;
+  --radius-lg: 10px;
+  --transition: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 *, *::before, *::after {
@@ -41,16 +42,16 @@
   box-sizing: border-box;
 }
 
-html { font-size: 15px; }
+html { font-size: 14px; }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Inter', sans-serif;
   background: var(--bg);
   color: var(--text);
-  line-height: 1.6;
+  line-height: 1.5;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  min-width: 0;
 }
 
 /* ── Layout ── */
@@ -87,18 +88,19 @@ body {
 }
 
 .sidebar-logo-mark {
-  width: 36px;
-  height: 36px;
-  background: linear-gradient(135deg, var(--accent), var(--accent-hover));
-  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  background: var(--accent);
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: 'Space Grotesk', sans-serif;
   font-weight: 700;
-  font-size: 0.85rem;
-  color: white;
+  font-size: 0.8rem;
+  color: #000;
   flex-shrink: 0;
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
 }
 
 .sidebar-logo-text {
@@ -278,12 +280,13 @@ body {
 
 .btn-primary {
   background: var(--accent);
-  color: white;
+  color: #000;
+  font-weight: 700;
 }
 
 .btn-primary:hover {
   background: var(--accent-hover);
-  box-shadow: 0 4px 20px rgba(232, 93, 4, 0.25);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
 }
 
 .btn-ghost {

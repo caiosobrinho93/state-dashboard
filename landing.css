@@ -5,15 +5,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
 
 :root {
-  --bg: #09090b;
-  --surface: #131316;
-  --border: #27272a;
-  --accent: #e85d04;
-  --accent-hover: #ff6d1a;
-  --accent-glow: rgba(232, 93, 4, 0.15);
-  --text: #fafafa;
-  --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
+  --bg: #000000;
+  --surface: #0a0a0a;
+  --surface-hover: #111111;
+  --border: #1a1a1a;
+  --accent: #d4af37; /* Gold */
+  --accent-hover: #f1e5ac;
+  --accent-glow: rgba(212, 175, 55, 0.1);
+  --neon: #00f2ff; /* Neon Cyan */
+  --text: #ffffff;
+  --text-secondary: #999999;
+  --text-muted: #555555;
+  --font-main: 'Inter', sans-serif;
+  --font-title: 'Space Grotesk', sans-serif;
 }
 
 *, *::before, *::after {
@@ -26,12 +30,15 @@ html {
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-main);
   background: var(--bg);
   color: var(--text);
   line-height: 1.6;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .container {
@@ -45,7 +52,7 @@ body {
   position: fixed;
   width: 700px;
   height: 700px;
-  background: radial-gradient(circle, rgba(232, 93, 4, 0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.05) 0%, transparent 70%);
   top: -300px;
   right: -200px;
   pointer-events: none;
@@ -56,7 +63,7 @@ body {
   position: fixed;
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, rgba(232, 93, 4, 0.05) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0, 242, 255, 0.03) 0%, transparent 70%);
   bottom: -200px;
   left: -200px;
   pointer-events: none;
@@ -78,6 +85,8 @@ body {
   align-items: center;
   justify-content: space-between;
   height: 72px;
+  gap: 16px;
+  min-width: 0;
 }
 
 .landing-logo {
@@ -112,7 +121,10 @@ body {
 .landing-nav {
   display: flex;
   align-items: center;
-  gap: 40px;
+  gap: 24px;
+  min-width: 0;
+  flex: 1;
+  justify-content: flex-end;
 }
 
 .landing-nav-links {
@@ -137,14 +149,16 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 22px;
+  padding: 8px 18px;
   background: var(--accent);
-  color: white;
+  color: #000;
   text-decoration: none;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 600;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
   transition: all 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .landing-cta-btn:hover {
@@ -208,7 +222,7 @@ body {
 }
 
 .hero h1 .gradient-text {
-  background: linear-gradient(135deg, var(--accent) 0%, #ff9a56 50%, var(--accent-hover) 100%);
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 50%, var(--accent) 100%);
   background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
