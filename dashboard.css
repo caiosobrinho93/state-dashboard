@@ -187,6 +187,8 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  width: 100%;
 }
 
 .main-header {
@@ -673,7 +675,6 @@ table tbody td:first-child {
   justify-content: space-between;
   gap: 16px;
   margin-bottom: 24px;
-  flex-wrap: wrap;
 }
 
 .toolbar-left {
@@ -681,6 +682,7 @@ table tbody td:first-child {
   align-items: center;
   gap: 12px;
   flex: 1;
+  min-width: 0;
 }
 
 .toolbar-right {
@@ -1082,4 +1084,42 @@ table tbody td:first-child {
     -webkit-overflow-scrolling: touch;
   }
 }
+@media (max-width: 768px) {
+  .toolbar {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 12px;
+  }
+  
+  .toolbar-left {
+    width: 100%;
+  }
 
+  .search-box {
+    width: 100%;
+  }
+
+  .toolbar-right {
+    justify-content: space-between;
+    width: 100%;
+  }
+}
+
+/* Base resets to prevent overflow */
+*, *::before, *::after {
+  max-width: 100%;
+}
+
+.kpi-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+}
+
+.grid-2, .grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
