@@ -52,19 +52,23 @@ const FinanceiroModule = {
 
       <div class="toolbar">
         <div class="toolbar-left">
+          <div class="search-add-group" style="margin-bottom:12px">
+            <div class="search-box">
+              ${Utils.icon('search', 18)}
+              <input type="text" class="form-input" placeholder="Filtrar lançamentos..." id="fin-search">
+            </div>
+            <button class="btn btn-primary btn-square" onclick="FinanceiroModule.openForm('receita')" title="Nova Receita">
+              ${Utils.icon('plus', 20)}
+            </button>
+            <button class="btn btn-danger btn-square" onclick="FinanceiroModule.openForm('despesa')" title="Nova Despesa">
+              ${Utils.icon('minus', 20)}
+            </button>
+          </div>
           <div class="filter-pills">
             <button class="filter-pill active" data-filter="todos">Todos</button>
             <button class="filter-pill" data-filter="receita">Receitas</button>
             <button class="filter-pill" data-filter="despesa">Despesas</button>
           </div>
-        </div>
-        <div class="toolbar-right">
-          <button class="btn btn-ghost" onclick="FinanceiroModule.openForm('despesa')">
-            ${Utils.icon('arrowDown', 16)} Nova Despesa
-          </button>
-          <button class="btn btn-primary" onclick="FinanceiroModule.openForm('receita')">
-            ${Utils.icon('arrowUp', 16)} Nova Receita
-          </button>
         </div>
       </div>
 

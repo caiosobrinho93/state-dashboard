@@ -9,15 +9,15 @@ const ClientesModule = {
     container.innerHTML = `
       <div class="toolbar">
         <div class="toolbar-left">
-          <div class="search-box">
-            ${Utils.icon('search', 18)}
-            <input type="text" class="form-input" placeholder="Buscar cliente..." id="cli-search" style="padding-left:40px;max-width:320px">
+          <div class="search-add-group">
+            <div class="search-box">
+              ${Utils.icon('search', 18)}
+              <input type="text" class="form-input" placeholder="Buscar cliente..." id="cli-search">
+            </div>
+            <button class="btn btn-primary btn-square" onclick="ClientesModule.openForm()" title="Novo Cliente">
+              ${Utils.icon('plus', 20)}
+            </button>
           </div>
-        </div>
-        <div class="toolbar-right">
-          <button class="btn btn-primary" onclick="ClientesModule.openForm()">
-            ${Utils.icon('plus', 18)} Novo Cliente
-          </button>
         </div>
       </div>
       <div class="table-wrapper">

@@ -296,6 +296,33 @@ body {
   box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
 }
 
+.btn-square {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: var(--radius);
+}
+
+.search-add-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.search-add-group .search-box {
+  flex: 1;
+}
+
+.search-add-group .form-input {
+  height: 40px;
+}
+
 .btn-ghost {
   background: transparent;
   color: var(--text-secondary);
@@ -688,6 +715,12 @@ table tbody td:first-child {
   gap: 12px;
   flex: 1;
   min-width: 0;
+}
+
+@media (max-width: 768px) {
+  .toolbar-left {
+    width: 100%;
+  }
 }
 
 .toolbar-right {

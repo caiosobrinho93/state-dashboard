@@ -37,12 +37,15 @@ const NegociacoesModule = {
 
       <div class="toolbar">
         <div class="toolbar-left">
-          <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1rem">Pipeline de Vendas</h3>
-        </div>
-        <div class="toolbar-right">
-          <button class="btn btn-primary" onclick="NegociacoesModule.openForm()">
-            ${Utils.icon('plus', 18)} Nova Negociação
-          </button>
+          <div class="search-add-group">
+            <div class="search-box">
+              ${Utils.icon('search', 18)}
+              <input type="text" class="form-input" placeholder="Buscar negociação..." id="neg-search">
+            </div>
+            <button class="btn btn-primary btn-square" onclick="NegociacoesModule.openForm()" title="Nova Negociação">
+              ${Utils.icon('plus', 20)}
+            </button>
+          </div>
         </div>
       </div>
 

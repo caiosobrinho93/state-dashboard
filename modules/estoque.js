@@ -27,9 +27,14 @@ const EstoqueModule = {
 
       <div class="toolbar">
         <div class="toolbar-left">
-          <div class="search-box">
-            ${Utils.icon('search', 18)}
-            <input type="text" class="form-input" placeholder="Buscar material..." id="est-search" style="padding-left:40px;max-width:320px">
+          <div class="search-add-group" style="margin-bottom:12px">
+            <div class="search-box">
+              ${Utils.icon('search', 18)}
+              <input type="text" class="form-input" placeholder="Buscar material..." id="est-search">
+            </div>
+            <button class="btn btn-primary btn-square" onclick="EstoqueModule.openForm()" title="Novo Item">
+              ${Utils.icon('plus', 20)}
+            </button>
           </div>
           <div class="filter-pills">
             <button class="filter-pill active" data-filter="todos">Todos</button>
@@ -37,11 +42,6 @@ const EstoqueModule = {
             <button class="filter-pill" data-filter="Ferragens">Ferragens</button>
             <button class="filter-pill" data-filter="Acabamento">Acabamento</button>
           </div>
-        </div>
-        <div class="toolbar-right">
-          <button class="btn btn-primary" onclick="EstoqueModule.openForm()">
-            ${Utils.icon('plus', 18)} Novo Item
-          </button>
         </div>
       </div>
 

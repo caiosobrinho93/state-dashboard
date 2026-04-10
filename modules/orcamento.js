@@ -10,9 +10,17 @@ const OrcamentoModule = {
     container.innerHTML = `
       <div class="toolbar">
         <div class="toolbar-left">
-          <div class="search-box">
-            ${Utils.icon('search', 18)}
-            <input type="text" class="form-input" placeholder="Buscar orçamento..." id="orc-search" style="padding-left:40px;max-width:320px">
+          <div class="search-add-group" style="margin-bottom:12px">
+            <div class="search-box">
+              ${Utils.icon('search', 18)}
+              <input type="text" class="form-input" placeholder="Buscar orçamento..." id="orc-search">
+            </div>
+            <button class="btn btn-primary btn-square" onclick="OrcamentoModule.openForm()" title="Novo Orçamento">
+              ${Utils.icon('plus', 20)}
+            </button>
+            <button class="btn btn-ghost btn-square" onclick="OrcamentoModule.openGerador()" title="Gerar PDF">
+              ${Utils.icon('pdf', 20)}
+            </button>
           </div>
           <div class="filter-pills">
             <button class="filter-pill active" data-filter="todos">Todos</button>
@@ -20,14 +28,6 @@ const OrcamentoModule = {
             <button class="filter-pill" data-filter="aprovado">Aprovados</button>
             <button class="filter-pill" data-filter="rejeitado">Rejeitados</button>
           </div>
-        </div>
-        <div class="toolbar-right">
-          <button class="btn btn-ghost" onclick="OrcamentoModule.openGerador()">
-            ${Utils.icon('pdf', 18)} Gerar Orçamento
-          </button>
-          <button class="btn btn-primary" onclick="OrcamentoModule.openForm()">
-            ${Utils.icon('plus', 18)} Novo Orçamento
-          </button>
         </div>
       </div>
       <div class="table-wrapper">
