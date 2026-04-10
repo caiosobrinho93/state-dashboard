@@ -81,9 +81,10 @@ body {
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 100;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.82);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
+  width: 100%;
 }
 
 .landing-header .container {
@@ -341,7 +342,16 @@ body {
 
 .mockup-content {
   display: grid;
-  grid-template-columns: 180px 1fr;
+  grid-template-columns: minmax(130px, 0.5fr) 1.5fr;
+}
+
+@media (max-width: 600px) {
+  .mockup-sidebar {
+    display: none;
+  }
+  .mockup-content {
+    grid-template-columns: 1fr;
+  }
 }
 
 .mockup-sidebar {
