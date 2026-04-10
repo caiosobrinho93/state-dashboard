@@ -15,11 +15,8 @@ const OrcamentoModule = {
               ${Utils.icon('search', 18)}
               <input type="text" class="form-input" placeholder="Buscar orçamento..." id="orc-search">
             </div>
-            <button class="btn btn-primary btn-square" onclick="OrcamentoModule.openForm()" title="Novo Orçamento">
+            <button class="btn btn-primary btn-square" onclick="OrcamentoModule.openForm()" title="Novo Orçamento (F1)">
               ${Utils.icon('plus', 20)}
-            </button>
-            <button class="btn btn-ghost btn-square" onclick="OrcamentoModule.openGerador()" title="Gerar PDF">
-              ${Utils.icon('pdf', 20)}
             </button>
           </div>
           <div class="filter-pills">
