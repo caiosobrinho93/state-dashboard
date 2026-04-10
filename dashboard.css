@@ -731,24 +731,46 @@ table tbody td:first-child {
 
 /* Toolbar */
 .toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  width: 100%;
   margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .toolbar-left {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  flex: 1;
-  min-width: 0;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
 }
 
-@media (max-width: 768px) {
-  .toolbar-left {
-    width: 100%;
+.search-add-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  flex-wrap: nowrap; /* Row 1 together */
+}
+
+.search-box {
+  flex: 1;
+  min-width: 200px;
+  max-width: 500px;
+}
+
+.filter-pills {
+  display: flex;
+  gap: 10px;
+  flex-wrap: nowrap; /* Filters on their own line */
+  overflow-x: auto;
+  padding-bottom: 4px;
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  .search-add-group {
+    gap: 8px;
   }
 }
 
