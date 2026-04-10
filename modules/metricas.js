@@ -145,7 +145,7 @@ const MetricasModule = {
 
     // Charts
     setTimeout(() => {
-      const colors = ['#d4af37', '#00ffaa', '#00f2ff', '#ffcc00', '#8b5cf6', '#ec4899'];
+      const colors = ['#ccff00', '#fbff00', '#2a2a2a', '#666666', '#8b5cf6', '#ec4899'];
 
       // Receita donut
       const recCanvas = document.getElementById('chart-receita-cat');

@@ -6,15 +6,15 @@
 
 :root {
   --bg: #000000;
-  --surface: #0a0a0a;
-  --surface-hover: #111111;
-  --border: #1a1a1a;
-  --accent: #d4af37; /* Gold */
-  --accent-hover: #f1e5ac;
-  --accent-glow: rgba(212, 175, 55, 0.1);
-  --neon: #00f2ff; /* Neon Cyan */
+  --surface: #0f0f0f;
+  --surface-hover: #161616;
+  --border: #222222;
+  --accent: #ccff00; /* Neon Yellow */
+  --accent-hover: #fbff00;
+  --accent-glow: rgba(204, 255, 0, 0.1);
+  --neon: #ccff00; 
   --text: #ffffff;
-  --text-secondary: #999999;
+  --text-secondary: #bbbbbb;
   --text-muted: #555555;
   --font-main: 'Inter', sans-serif;
   --font-title: 'Space Grotesk', sans-serif;

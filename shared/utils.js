@@ -243,8 +243,8 @@ const Utils = {
       const y = padding.top + chartH - barH;
 
       const gradient = ctx.createLinearGradient(x, y, x, y + barH);
-      gradient.addColorStop(0, options.color || '#d4af37');
-      gradient.addColorStop(1, options.colorEnd || 'rgba(212, 175, 55, 0.2)');
+      gradient.addColorStop(0, options.color || '#ccff00');
+      gradient.addColorStop(1, options.colorEnd || 'rgba(204, 255, 0, 0.1)');
 
       ctx.fillStyle = gradient;
       ctx.beginPath();
@@ -288,7 +288,7 @@ const Utils = {
     }
 
     // Line
-    ctx.strokeStyle = options.color || '#d4af37';
+    ctx.strokeStyle = options.color || '#ccff00';
     ctx.lineWidth = 2;
     ctx.lineJoin = 'round';
     ctx.beginPath();
@@ -307,8 +307,8 @@ const Utils = {
     ctx.lineTo(padding.left, padding.top + chartH);
     ctx.closePath();
     const gradient = ctx.createLinearGradient(0, padding.top, 0, padding.top + chartH);
-    gradient.addColorStop(0, 'rgba(212, 175, 55, 0.15)');
-    gradient.addColorStop(1, 'rgba(212, 175, 55, 0)');
+    gradient.addColorStop(0, 'rgba(204, 255, 0, 0.15)');
+    gradient.addColorStop(1, 'rgba(204, 255, 0, 0)');
     ctx.fillStyle = gradient;
     ctx.fill();
 
@@ -317,7 +317,7 @@ const Utils = {
       const x = padding.left + (chartW / (data.length - 1)) * i;
       const y = padding.top + chartH - (d.value / maxVal) * chartH;
 
-      ctx.fillStyle = options.color || '#d4af37';
+      ctx.fillStyle = options.color || '#ccff00';
       ctx.beginPath();
       ctx.arc(x, y, 3, 0, Math.PI * 2);
       ctx.fill();
@@ -345,7 +345,7 @@ const Utils = {
     const innerRadius = radius * 0.65;
     const total = data.reduce((s, d) => s + d.value, 0) || 1;
 
-    const colors = options.colors || ['#d4af37', '#00ffaa', '#00f2ff', '#ffcc00', '#8b5cf6', '#ec4899'];
+    const colors = options.colors || ['#ccff00', '#fbff00', '#2a2a2a', '#666666', '#8b5cf6', '#ec4899'];
 
     let startAngle = -Math.PI / 2;
     data.forEach((d, i) => {

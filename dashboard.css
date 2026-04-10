@@ -8,31 +8,19 @@
 /* ── Reset & Variables ── */
 :root {
   --bg: #000000;
-  --surface: #0a0a0a;
-  --surface-hover: #111111;
-  --surface-active: #1a1a1a;
-  --border: #1a1a1a;
-  --border-light: #222222;
-  --accent: #d4af37; /* Gold */
-  --accent-hover: #f1e5ac;
-  --accent-muted: rgba(212, 175, 55, 0.1);
-  --accent-subtle: rgba(212, 175, 55, 0.05);
-  --neon: #00f2ff; /* Neon Cyan */
+  --surface: #0f0f0f;
+  --panel: #161616;
+  --border: #222222;
+  --accent: #ccff00; /* Neon Yellow-Green */
+  --accent-secondary: #fbff00; /* Bright Neon Yellow */
+  --accent-glow: rgba(204, 255, 0, 0.15);
+  --gray-metallic: #2a2a2a;
   --text: #ffffff;
-  --text-secondary: #999999;
-  --text-muted: #555555;
-  --success: #00ffaa; /* Neon Green */
-  --success-muted: rgba(0, 255, 170, 0.1);
-  --warning: #ffcc00;
-  --warning-muted: rgba(255, 204, 0, 0.1);
-  --danger: #ff4444;
-  --danger-muted: rgba(255, 68, 68, 0.1);
-  --info: var(--neon);
-  --info-muted: rgba(0, 242, 255, 0.1);
+  --text-secondary: #bbbbbb; 
+  --text-muted: #666666;
+  --radius: 12px;
   --sidebar-w: 240px;
   --header-h: 60px;
-  --radius: 6px;
-  --radius-lg: 10px;
   --transition: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -297,30 +285,25 @@ body {
 }
 
 .btn-square {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border-radius: var(--radius);
+  border-radius: 8px;
+  background: var(--accent);
+  color: #000;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 0 10px var(--accent-glow);
 }
 
-.search-add-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  max-width: 400px;
-}
-
-.search-add-group .search-box {
-  flex: 1;
-}
-
-.search-add-group .form-input {
-  height: 40px;
+.btn-square:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px var(--accent-glow);
 }
 
 .btn-ghost {
@@ -412,9 +395,27 @@ body {
 
 /* Search */
 .search-box {
+  flex: 1;
+  min-width: 200px;
+  max-width: 500px;
   position: relative;
-  display: flex;
-  align-items: center;
+}
+
+.search-box input {
+  width: 100%;
+  height: 44px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: #fff;
+  padding: 0 16px 0 44px;
+  transition: all 0.3s;
+}
+
+.search-box input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 15px var(--accent-glow);
+  outline: none;
 }
 
 .search-box .dc-icon {
@@ -422,10 +423,6 @@ body {
   left: 12px;
   color: var(--text-muted);
   pointer-events: none;
-}
-
-.search-box input {
-  padding-left: 40px;
 }
 
 /* Tables */
@@ -524,12 +521,40 @@ table tbody td:first-child {
 }
 .status-muted::before { background: var(--text-muted); }
 
+/* ── Base Animations ── */
+@keyframes glowPulse {
+  0% { box-shadow: 0 0 5px var(--accent-glow); }
+  50% { box-shadow: 0 0 20px var(--accent-glow); }
+  100% { box-shadow: 0 0 5px var(--accent-glow); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes ambientShift {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(15deg); }
+}
+
+.animate-glow { animation: glowPulse 3s infinite ease-in-out; }
+.animate-float { animation: float 5s infinite ease-in-out; }
+
 /* Cards / Panels */
 .panel {
-  background: var(--surface);
+  background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius);
   padding: 24px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.panel:hover {
+  border-color: var(--accent);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 .panel-header {
@@ -555,11 +580,15 @@ table tbody td:first-child {
 }
 
 .kpi-card {
-  background: var(--surface);
+  background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 20px 24px;
-  transition: border-color var(--transition);
+  border-radius: var(--radius);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: float 6s infinite ease-in-out;
+  animation-delay: calc(var(--delay, 0) * 1s);
 }
 
 .kpi-card:hover {
