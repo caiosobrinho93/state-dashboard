@@ -9,10 +9,8 @@ const App = {
     this.cacheDom();
     this.bindEvents();
     
-    // Seed demo data only if empty
-    if (!Store.orcamentos.getAll().length) {
-      Store.seedDemoData();
-    }
+    // Seed demo data
+    Store.seedDemoData();
 
     // Update date
     const dateEl = document.getElementById('current-date');
@@ -25,22 +23,8 @@ const App = {
       link.addEventListener('click', () => this.navigate(link.dataset.module));
     });
 
-    // Performance: Mouse tracking for background
-    this.initBackgroundEffect();
-    
-    // Initial Render
+    // Initial render
     this.navigate(this.currentModule);
-  },
-
-  initBackgroundEffect() {
-    const root = document.documentElement;
-    document.addEventListener('mousemove', (e) => {
-      // Use requestAnimationFrame for smoother performance
-      requestAnimationFrame(() => {
-        root.style.setProperty('--mouse-x', `${e.clientX}px`);
-        root.style.setProperty('--mouse-y', `${e.clientY}px`);
-      });
-    }, { passive: true });
   },
 
   cacheDom() {
