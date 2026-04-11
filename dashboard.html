@@ -13,6 +13,9 @@
         <!-- Top Bar -->
         <header class="topbar">
             <div class="topbar-left">
+                <button class="mobile-nav-btn" id="mobileMenuBtn" onclick="App.toggleMobileMenu()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
                 <a href="index.html" class="topbar-logo">
                     <div class="logo-icon">DC</div>
                     <span class="logo-text">Digital Corte</span>
@@ -54,6 +57,19 @@
                 </a>
             </div>
         </header>
+
+        <!-- Mobile Menu Overlay -->
+        <div class="mobile-menu" id="mobileMenu">
+            <div class="mobile-menu-header">
+                <span>Menu</span>
+                <button class="mobile-menu-close" onclick="App.closeMobileMenu()">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="mobile-menu-items" id="mobileMenuItems">
+                <!-- Populated by JS -->
+            </div>
+        </div>
 
         <!-- Main Content -->
         <main class="main">
