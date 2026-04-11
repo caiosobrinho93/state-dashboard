@@ -317,6 +317,38 @@ body {
   border-radius: var(--radius);
 }
 
+/* ── Detail Rows in Modal ── */
+.detail-row-mini {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.detail-row-mini:last-child {
+  border-bottom: none;
+}
+
+.detail-row-mini span {
+  font-size: 0.85rem;
+  color: var(--text-2);
+}
+
+.detail-row-mini strong {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* ── Table Clickable ── */
+.table-clickable tbody tr {
+  cursor: pointer;
+}
+
+.table-clickable tbody tr:hover td {
+  background: var(--surface-2);
+}
+
 .item-row:last-child {
   border-bottom: none;
 }

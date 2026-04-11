@@ -20,31 +20,20 @@ const ClientesModule = {
         </div>
         <div class="section-body">
           ${clientes.length ? `
-            <table class="table-minimal">
+            <table class="table-minimal table-clickable">
               <thead>
                 <tr>
                   <th>Nome</th>
                   <th>Contato</th>
                   <th>Projetos</th>
-                  <th></th>
                 </tr>
               </thead>
               <tbody>
                 ${clientes.map(c => `
-                  <tr>
+                  <tr onclick="ClientesModule.openDetail('${c.id}')">
                     <td><strong>${Utils.escapeHtml(c.nome)}</strong></td>
                     <td>${c.telefone || c.email || '—'}</td>
                     <td>${Store.projetos.getAll().filter(p => p.clienteId === c.id).length}</td>
-                    <td>
-                      <div class="actions-mini">
-                        <button class="btn-icon-mini" onclick="ClientesModule.openForm('${c.id}')" title="Editar">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                        </button>
-                        <button class="btn-icon-mini danger" onclick="ClientesModule.remove('${c.id}')" title="Excluir">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                        </button>
-                      </div>
-                    </td>
                   </tr>
                 `).join('')}
               </tbody>
@@ -53,6 +42,51 @@ const ClientesModule = {
         </div>
       </div>
     `;
+  },
+
+  openDetail(id) {
+    const c = Store.clientes.getById(id);
+    if (!c) return;
+
+    const projetos = Store.projetos.getAll().filter(p => p.clienteId === id);
+    const orcamentos = Store.orcamentos.getAll().filter(o => o.clienteId === id);
+
+    const html = `
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="detail-row-mini">
+          <span>Nome</span>
+          <strong>${Utils.escapeHtml(c.nome)}</strong>
+        </div>
+        <div class="detail-row-mini">
+          <span>Telefone</span>
+          <strong>${c.telefone || '—'}</strong>
+        </div>
+        <div class="detail-row-mini">
+          <span>Email</span>
+          <strong>${c.email || '—'}</strong>
+        </div>
+        <div class="detail-row-mini">
+          <span>Endereço</span>
+          <strong>${c.endereco || '—'}</strong>
+        </div>
+        <div class="detail-row-mini">
+          <span>Projetos</span>
+          <strong>${projetos.length}</strong>
+        </div>
+        <div class="detail-row-mini">
+          <span>Orçamentos</span>
+          <strong>${orcamentos.length}</strong>
+        </div>
+      </div>
+    `;
+
+    const footer = `
+      <button class="btn btn-danger" onclick="ClientesModule.remove('${c.id}');document.querySelector('.modal-overlay').remove()">Excluir</button>
+      <button class="btn btn-ghost" onclick="document.querySelector('.modal-overlay').remove()">Fechar</button>
+      <button class="btn btn-primary" onclick="document.querySelector('.modal-overlay').remove();ClientesModule.openForm('${c.id}')">Editar</button>
+    `;
+
+    Utils.modal(Utils.escapeHtml(c.nome), html, null, footer);
   },
 
   openForm(id = null) {
@@ -104,11 +138,9 @@ const ClientesModule = {
     App.refresh();
   },
 
-  async remove(id) {
-    if (confirm('Excluir cliente?')) {
-      Store.clientes.remove(id);
-      Utils.toast('Excluído');
-      App.refresh();
-    }
+  remove(id) {
+    Store.clientes.remove(id);
+    Utils.toast('Excluído');
+    App.refresh();
   }
 };

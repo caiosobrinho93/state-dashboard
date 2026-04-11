@@ -36,7 +36,7 @@ const NegociacoesModule = {
                     <span class="pipeline-col-count">${stageNegs.length}</span>
                   </div>
                   ${stageNegs.length ? stageNegs.map(n => `
-                    <div class="pipeline-card-mini" onclick="NegociacoesModule.openForm('${n.id}')">
+                    <div class="pipeline-card-mini" onclick="event.stopPropagation();NegociacoesModule.openDetail('${n.id}')">
                       <div class="pipeline-card-title">${Utils.escapeHtml(n.titulo)}</div>
                       <div class="pipeline-card-value">${Utils.currency(n.valor)}</div>
                     </div>
@@ -48,6 +48,46 @@ const NegociacoesModule = {
         </div>
       </div>
     `;
+  },
+
+  openDetail(id) {
+    const n = Store.negociacoes.getById(id);
+    if (!n) return;
+
+    const html = `
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="detail-row-mini">
+          <span>Título</span>
+          <strong>${Utils.escapeHtml(n.titulo)}</strong>
+        </div>
+        <div class="detail-row-mini">
+          <span>Cliente</span>
+          <strong>${Utils.escapeHtml(n.clienteNome) || '—'}</strong>
+        </div>
+        <div class="detail-row-mini">
+          <span>Valor</span>
+          <strong style="color:var(--accent)">${Utils.currency(n.valor)}</strong>
+        </div>
+        <div class="detail-row-mini">
+          <span>Status</span>
+          <span class="status-pill ${n.status === 'contato' ? 'blue' : n.status === 'proposta' ? 'orange' : n.status === 'negociacao' ? 'yellow' : 'green'}">
+            ${n.status === 'contato' ? 'Contato' : n.status === 'proposta' ? 'Proposta' : n.status === 'negociacao' ? 'Negociação' : 'Fechado'}
+          </span>
+        </div>
+        <div class="detail-row-mini">
+          <span>Probabilidade</span>
+          <strong>${n.probabilidade || 50}%</strong>
+        </div>
+      </div>
+    `;
+
+    const footer = `
+      <button class="btn btn-danger" onclick="NegociacoesModule.remove('${n.id}');document.querySelector('.modal-overlay').remove()">Excluir</button>
+      <button class="btn btn-ghost" onclick="document.querySelector('.modal-overlay').remove()">Fechar</button>
+      <button class="btn btn-primary" onclick="document.querySelector('.modal-overlay').remove();NegociacoesModule.openForm('${n.id}')">Editar</button>
+    `;
+
+    Utils.modal(Utils.escapeHtml(n.titulo), html, null, footer);
   },
 
   openForm(id = null) {
@@ -114,11 +154,9 @@ const NegociacoesModule = {
     App.refresh();
   },
 
-  async remove(id) {
-    if (confirm('Excluir negociação?')) {
-      Store.negociacoes.remove(id);
-      Utils.toast('Excluída');
-      App.refresh();
-    }
+  remove(id) {
+    Store.negociacoes.remove(id);
+    Utils.toast('Excluída');
+    App.refresh();
   }
 };

@@ -121,19 +121,24 @@ const Utils = {
     }, 3000);
   },
 
-  // Modal
-  modal(title, content, onConfirm) {
+  // Modal with optional custom footer
+  modal(title, content, onConfirm, customFooter = null) {
     const existing = document.querySelector('.modal-overlay');
     if (existing) existing.remove();
 
-    const footerHtml = onConfirm
-      ? `<div class="modal-footer">
+    let footerHtml;
+    if (customFooter) {
+      footerHtml = `<div class="modal-footer">${customFooter}</div>`;
+    } else if (onConfirm) {
+      footerHtml = `<div class="modal-footer">
           <button class="btn btn-ghost" onclick="this.closest('.modal-overlay').remove()">Cancelar</button>
           <button class="btn btn-primary" id="modal-confirm">Confirmar</button>
-        </div>`
-      : `<div class="modal-footer">
+        </div>`;
+    } else {
+      footerHtml = `<div class="modal-footer">
           <button class="btn btn-ghost" onclick="this.closest('.modal-overlay').remove()">Fechar</button>
         </div>`;
+    }
 
     const overlay = document.createElement('div');
     overlay.className = 'modal-overlay';

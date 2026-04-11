@@ -29,13 +29,13 @@ const EstoqueModule = {
         </div>
         <div class="section-body">
           ${estoque.length ? `
-            <table class="table-minimal">
-              <thead><tr><th>Material</th><th>Categoria</th><th>Qtd</th><th>Status</th><th></th></tr></thead>
+            <table class="table-minimal table-clickable">
+              <thead><tr><th>Material</th><th>Categoria</th><th>Qtd</th><th>Status</th></tr></thead>
               <tbody>
                 ${estoque.map(e => {
                   const isLow = e.quantidade <= (e.minimo || 5);
                   return `
-                    <tr>
+                    <tr onclick="EstoqueModule.openDetail('${e.id}')">
                       <td><strong>${Utils.escapeHtml(e.nome)}</strong></td>
                       <td>${e.categoria || '—'}</td>
                       <td>${e.quantidade} ${e.unidade || ''}</td>
@@ -43,16 +43,6 @@ const EstoqueModule = {
                         <span class="status-pill ${isLow ? 'red' : 'green'}">
                           ${isLow ? 'Baixo' : 'OK'}
                         </span>
-                      </td>
-                      <td>
-                        <div class="actions-mini">
-                          <button class="btn-icon-mini" onclick="EstoqueModule.openForm('${e.id}')" title="Editar">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                          </button>
-                          <button class="btn-icon-mini danger" onclick="EstoqueModule.remove('${e.id}')" title="Excluir">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                          </button>
-                        </div>
                       </td>
                     </tr>
                   `;
@@ -63,6 +53,46 @@ const EstoqueModule = {
         </div>
       </div>
     `;
+  },
+
+  openDetail(id) {
+    const e = Store.estoque.getById(id);
+    if (!e) return;
+
+    const isLow = e.quantidade <= (e.minimo || 5);
+
+    const html = `
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="detail-row-mini">
+          <span>Material</span>
+          <strong>${Utils.escapeHtml(e.nome)}</strong>
+        </div>
+        <div class="detail-row-mini">
+          <span>Categoria</span>
+          <strong>${e.categoria || '—'}</strong>
+        </div>
+        <div class="detail-row-mini">
+          <span>Quantidade</span>
+          <strong style="color:${isLow ? 'var(--danger)' : 'inherit'}">${e.quantidade} ${e.unidade || ''}</strong>
+        </div>
+        <div class="detail-row-mini">
+          <span>Mínimo</span>
+          <strong>${e.minimo || 5} ${e.unidade || ''}</strong>
+        </div>
+        <div class="detail-row-mini">
+          <span>Status</span>
+          <span class="status-pill ${isLow ? 'red' : 'green'}">${isLow ? 'Estoque Baixo' : 'Normal'}</span>
+        </div>
+      </div>
+    `;
+
+    const footer = `
+      <button class="btn btn-danger" onclick="EstoqueModule.remove('${e.id}');document.querySelector('.modal-overlay').remove()">Excluir</button>
+      <button class="btn btn-ghost" onclick="document.querySelector('.modal-overlay').remove()">Fechar</button>
+      <button class="btn btn-primary" onclick="document.querySelector('.modal-overlay').remove();EstoqueModule.openForm('${e.id}')">Editar</button>
+    `;
+
+    Utils.modal(Utils.escapeHtml(e.nome), html, null, footer);
   },
 
   openForm(id = null) {
@@ -132,11 +162,9 @@ const EstoqueModule = {
     App.refresh();
   },
 
-  async remove(id) {
-    if (confirm('Excluir material?')) {
-      Store.estoque.remove(id);
-      Utils.toast('Excluído');
-      App.refresh();
-    }
+  remove(id) {
+    Store.estoque.remove(id);
+    Utils.toast('Excluído');
+    App.refresh();
   }
 };

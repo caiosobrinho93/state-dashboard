@@ -35,22 +35,15 @@ const FinanceiroModule = {
         </div>
         <div class="section-body">
           ${lancamentos.length ? `
-            <table class="table-minimal">
-              <thead><tr><th>Descrição</th><th>Data</th><th>Tipo</th><th>Valor</th><th></th></tr></thead>
+            <table class="table-minimal table-clickable">
+              <thead><tr><th>Descrição</th><th>Data</th><th>Tipo</th><th>Valor</th></tr></thead>
               <tbody>
                 ${lancamentos.sort((a,b) => new Date(b.data) - new Date(a.data)).map(f => `
-                  <tr>
+                  <tr onclick="FinanceiroModule.openDetail('${f.id}')">
                     <td><strong>${Utils.escapeHtml(f.descricao)}</strong></td>
                     <td>${Utils.date(f.data)}</td>
                     <td><span class="status-pill ${f.tipo === 'receita' ? 'green' : 'red'}">${f.tipo === 'receita' ? 'Receita' : 'Despesa'}</span></td>
                     <td class="col-num" style="color:var(--${f.tipo === 'receita' ? 'success' : 'danger'})">${f.tipo === 'receita' ? '+' : '-'}${Utils.currency(f.valor)}</td>
-                    <td>
-                      <div class="actions-mini">
-                        <button class="btn-icon-mini danger" onclick="FinanceiroModule.remove('${f.id}')" title="Excluir">
-                          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                        </button>
-                      </div>
-                    </td>
                   </tr>
                 `).join('')}
               </tbody>
@@ -59,6 +52,39 @@ const FinanceiroModule = {
         </div>
       </div>
     `;
+  },
+
+  openDetail(id) {
+    const f = Store.financeiro.getById(id);
+    if (!f) return;
+
+    const html = `
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="detail-row-mini">
+          <span>Descrição</span>
+          <strong>${Utils.escapeHtml(f.descricao)}</strong>
+        </div>
+        <div class="detail-row-mini">
+          <span>Tipo</span>
+          <span class="status-pill ${f.tipo === 'receita' ? 'green' : 'red'}">${f.tipo === 'receita' ? 'Receita' : 'Despesa'}</span>
+        </div>
+        <div class="detail-row-mini">
+          <span>Valor</span>
+          <strong style="color:var(--${f.tipo === 'receita' ? 'success' : 'danger'})">${f.tipo === 'receita' ? '+' : '-'}${Utils.currency(f.valor)}</strong>
+        </div>
+        <div class="detail-row-mini">
+          <span>Data</span>
+          <strong>${Utils.date(f.data)}</strong>
+        </div>
+      </div>
+    `;
+
+    const footer = `
+      <button class="btn btn-danger" onclick="FinanceiroModule.remove('${f.id}');document.querySelector('.modal-overlay').remove()">Excluir</button>
+      <button class="btn btn-ghost" onclick="document.querySelector('.modal-overlay').remove()">Fechar</button>
+    `;
+
+    Utils.modal(Utils.escapeHtml(f.descricao), html, null, footer);
   },
 
   openForm(tipo = 'receita') {
@@ -106,11 +132,9 @@ const FinanceiroModule = {
     App.refresh();
   },
 
-  async remove(id) {
-    if (confirm('Excluir lançamento?')) {
-      Store.financeiro.remove(id);
-      Utils.toast('Excluído');
-      App.refresh();
-    }
+  remove(id) {
+    Store.financeiro.remove(id);
+    Utils.toast('Excluído');
+    App.refresh();
   }
 };

@@ -20,19 +20,18 @@ const OrcamentoModule = {
         </div>
         <div class="section-body">
           ${orcamentos.length ? `
-            <table class="table-minimal">
+            <table class="table-minimal table-clickable">
               <thead>
                 <tr>
                   <th>Título</th>
                   <th>Cliente</th>
                   <th>Valor</th>
                   <th>Status</th>
-                  <th></th>
                 </tr>
               </thead>
               <tbody>
                 ${orcamentos.map(o => `
-                  <tr>
+                  <tr onclick="OrcamentoModule.openDetail('${o.id}')">
                     <td><strong>${Utils.escapeHtml(o.titulo)}</strong></td>
                     <td>${Utils.escapeHtml(o.clienteNome) || '—'}</td>
                     <td class="col-num">${Utils.currency(o.total)}</td>
@@ -40,19 +39,6 @@ const OrcamentoModule = {
                       <span class="status-pill ${o.status === 'aprovado' ? 'green' : o.status === 'pendente' ? 'orange' : o.status === 'rejeitado' ? 'red' : 'blue'}">
                         ${o.status === 'aprovado' ? 'Aprovado' : o.status === 'pendente' ? 'Pendente' : o.status === 'rejeitado' ? 'Rejeitado' : 'Orçamento'}
                       </span>
-                    </td>
-                    <td>
-                      <div class="actions-mini">
-                        <button class="btn-icon-mini" onclick="OrcamentoModule.gerarPDF('${o.id}')" title="PDF">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>
-                        </button>
-                        <button class="btn-icon-mini" onclick="OrcamentoModule.openForm('${o.id}')" title="Editar">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                        </button>
-                        <button class="btn-icon-mini danger" onclick="OrcamentoModule.remove('${o.id}')" title="Excluir">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                        </button>
-                      </div>
                     </td>
                   </tr>
                 `).join('')}
@@ -62,6 +48,47 @@ const OrcamentoModule = {
         </div>
       </div>
     `;
+  },
+
+  openDetail(id) {
+    const o = Store.orcamentos.getById(id);
+    if (!o) return;
+
+    const html = `
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="detail-row-mini">
+          <span>Título</span>
+          <strong>${Utils.escapeHtml(o.titulo)}</strong>
+        </div>
+        <div class="detail-row-mini">
+          <span>Cliente</span>
+          <strong>${Utils.escapeHtml(o.clienteNome) || '—'}</strong>
+        </div>
+        <div class="detail-row-mini">
+          <span>Valor</span>
+          <strong style="color:var(--accent)">${Utils.currency(o.total)}</strong>
+        </div>
+        <div class="detail-row-mini">
+          <span>Status</span>
+          <span class="status-pill ${o.status === 'aprovado' ? 'green' : o.status === 'pendente' ? 'orange' : o.status === 'rejeitado' ? 'red' : 'blue'}">
+            ${o.status === 'aprovado' ? 'Aprovado' : o.status === 'pendente' ? 'Pendente' : o.status === 'rejeitado' ? 'Rejeitado' : 'Orçamento'}
+          </span>
+        </div>
+        <div class="detail-row-mini">
+          <span>Validade</span>
+          <strong>${Utils.date(o.validade) || '—'}</strong>
+        </div>
+      </div>
+    `;
+
+    const footer = `
+      <button class="btn btn-danger" onclick="OrcamentoModule.remove('${o.id}');document.querySelector('.modal-overlay').remove()">Excluir</button>
+      <button class="btn btn-ghost" onclick="document.querySelector('.modal-overlay').remove()">Fechar</button>
+      <button class="btn btn-ghost" onclick="document.querySelector('.modal-overlay').remove();OrcamentoModule.gerarPDF('${o.id}')">PDF</button>
+      <button class="btn btn-primary" onclick="document.querySelector('.modal-overlay').remove();OrcamentoModule.openForm('${o.id}')">Editar</button>
+    `;
+
+    Utils.modal(Utils.escapeHtml(o.titulo), html, null, footer);
   },
 
   openForm(id = null) {
@@ -84,6 +111,7 @@ const OrcamentoModule = {
         <div class="form-group">
           <label>Status</label>
           <select class="form-select" id="orc-status">
+            <option value="orcamento" ${orc?.status === 'orcamento' ? 'selected' : ''}>Orçamento</option>
             <option value="pendente" ${orc?.status === 'pendente' ? 'selected' : ''}>Pendente</option>
             <option value="aprovado" ${orc?.status === 'aprovado' ? 'selected' : ''}>Aprovado</option>
             <option value="rejeitado" ${orc?.status === 'rejeitado' ? 'selected' : ''}>Rejeitado</option>
@@ -117,7 +145,7 @@ const OrcamentoModule = {
       clienteId,
       clienteNome: cliente?.nome || '',
       total: parseFloat(document.getElementById('orc-valor')?.value) || 0,
-      status: document.getElementById('orc-status')?.value || 'pendente',
+      status: document.getElementById('orc-status')?.value || 'orcamento',
       validade: document.getElementById('orc-validade')?.value,
       itens: []
     };
@@ -134,11 +162,9 @@ const OrcamentoModule = {
   },
 
   async remove(id) {
-    if (confirm('Excluir orçamento?')) {
-      Store.orcamentos.remove(id);
-      Utils.toast('Excluído');
-      App.refresh();
-    }
+    Store.orcamentos.remove(id);
+    Utils.toast('Excluído');
+    App.refresh();
   },
 
   gerarPDF(id) {
