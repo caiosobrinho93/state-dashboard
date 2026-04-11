@@ -618,8 +618,8 @@ table tbody td:first-child {
     display: none; /* Spotlight is too expensive for mobile performance */
   }
   .panel, .kpi-card {
-    backdrop-filter: none; /* Blur is a major performance killer on mobile */
-    background: #1a1715;
+    backdrop-filter: none;
+    background: linear-gradient(160deg, #1e1b19 0%, #161311 100%);
   }
 }
 
