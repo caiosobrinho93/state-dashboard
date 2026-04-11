@@ -101,65 +101,69 @@ const Utils = {
 
   // Simple toast notification
   toast(message, type = 'success') {
-    const existing = document.querySelector('.dc-toast');
+    const existing = document.querySelector('.toast');
     if (existing) existing.remove();
 
     const toast = document.createElement('div');
-    toast.className = `dc-toast dc-toast-${type}`;
+    toast.className = `toast toast-${type}`;
     toast.innerHTML = `
-      <span class="dc-toast-icon">${type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ'}</span>
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+        ${type === 'success' ? '<path d="M20 6L9 17l-5-5"/>' : type === 'error' ? '<path d="M18 6L6 18M6 6l12 12"/>' : '<circle cx="12" cy="12" r="10"/>'}
+      </svg>
       <span>${message}</span>
     `;
     document.body.appendChild(toast);
 
-    requestAnimationFrame(() => toast.classList.add('dc-toast-show'));
+    requestAnimationFrame(() => toast.classList.add('show'));
     setTimeout(() => {
-      toast.classList.remove('dc-toast-show');
-      setTimeout(() => toast.remove(), 300);
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 200);
     }, 3000);
   },
 
   // Modal
   modal(title, content, onConfirm) {
-    const existing = document.querySelector('.dc-modal-overlay');
+    const existing = document.querySelector('.modal-overlay');
     if (existing) existing.remove();
 
     const footerHtml = onConfirm
-      ? `<div class="dc-modal-footer">
-          <button class="btn btn-ghost" onclick="this.closest('.dc-modal-overlay').remove()">Cancelar</button>
-          <button class="btn btn-primary" id="dc-modal-confirm">Confirmar</button>
+      ? `<div class="modal-footer">
+          <button class="btn btn-ghost" onclick="this.closest('.modal-overlay').remove()">Cancelar</button>
+          <button class="btn btn-primary" id="modal-confirm">Confirmar</button>
         </div>`
-      : `<div class="dc-modal-footer">
-          <button class="btn btn-ghost" onclick="this.closest('.dc-modal-overlay').remove()">Fechar</button>
+      : `<div class="modal-footer">
+          <button class="btn btn-ghost" onclick="this.closest('.modal-overlay').remove()">Fechar</button>
         </div>`;
 
     const overlay = document.createElement('div');
-    overlay.className = 'dc-modal-overlay';
+    overlay.className = 'modal-overlay';
     overlay.innerHTML = `
-      <div class="dc-modal">
-        <div class="dc-modal-header">
+      <div class="modal">
+        <div class="modal-header">
           <h3>${title}</h3>
-          <button class="dc-modal-close" onclick="this.closest('.dc-modal-overlay').remove()">✕</button>
+          <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
         </div>
-        <div class="dc-modal-body">${content}</div>
+        <div class="modal-body">${content}</div>
         ${footerHtml}
       </div>
     `;
 
     document.body.appendChild(overlay);
-    requestAnimationFrame(() => overlay.classList.add('dc-modal-show'));
+    requestAnimationFrame(() => overlay.classList.add('show'));
 
     if (onConfirm) {
-      overlay.querySelector('#dc-modal-confirm').addEventListener('click', () => {
+      overlay.querySelector('#modal-confirm').addEventListener('click', () => {
         onConfirm(overlay);
-        overlay.classList.remove('dc-modal-show');
+        overlay.classList.remove('show');
         setTimeout(() => overlay.remove(), 200);
       });
     }
 
     overlay.addEventListener('click', (e) => {
       if (e.target === overlay) {
-        overlay.classList.remove('dc-modal-show');
+        overlay.classList.remove('show');
         setTimeout(() => overlay.remove(), 200);
       }
     });

@@ -1,5 +1,5 @@
 // ============================================
-// DIGITAL CORTE — Módulo: Clientes
+// DIGITAL CORTE — Clientes (Clean)
 // ============================================
 
 const ClientesModule = {
@@ -7,210 +7,108 @@ const ClientesModule = {
     const clientes = Store.clientes.getAll();
 
     container.innerHTML = `
-      <div class="toolbar">
-        <div class="toolbar-left">
-          <div class="search-add-group">
-            <div class="search-box">
-              ${Utils.icon('search', 18)}
-              <input type="text" class="form-input" placeholder="Buscar cliente..." id="cli-search">
-            </div>
-            <button class="btn btn-primary btn-square" onclick="ClientesModule.openForm()" title="Novo Cliente">
-              ${Utils.icon('plus', 20)}
-            </button>
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            Clientes (${clientes.length})
           </div>
+          <button class="btn btn-primary btn-sm" onclick="ClientesModule.openForm()">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Novo
+          </button>
+        </div>
+        <div class="section-body">
+          ${clientes.length ? `
+            <table class="table-minimal">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Contato</th>
+                  <th>Projetos</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                ${clientes.map(c => `
+                  <tr>
+                    <td><strong>${Utils.escapeHtml(c.nome)}</strong></td>
+                    <td>${c.telefone || c.email || '—'}</td>
+                    <td>${Store.projetos.getAll().filter(p => p.clienteId === c.id).length}</td>
+                    <td>
+                      <div class="actions-mini">
+                        <button class="btn-icon-mini" onclick="ClientesModule.openForm('${c.id}')" title="Editar">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                        <button class="btn-icon-mini danger" onclick="ClientesModule.remove('${c.id}')" title="Excluir">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          ` : '<div class="empty-mini">Nenhum cliente. Clique em Novo para adicionar.</div>'}
         </div>
       </div>
-      <div class="table-wrapper">
-        <table class="table-responsive">
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th class="col-hide-sm">Email</th>
-              <th class="col-hide-sm">Telefone</th>
-              <th class="col-hide-md">Endereço</th>
-              <th class="col-hide-md">Projetos</th>
-              <th class="col-hide-sm col-actions" style="width:100px">Ações</th>
-            </tr>
-          </thead>
-          <tbody id="cli-table-body"></tbody>
-        </table>
-      </div>
-    `;
-
-    this.renderTable(clientes);
-
-    const search = document.getElementById('cli-search');
-    search?.addEventListener('input', Utils.debounce(() => {
-      const q = (search.value || '').toLowerCase();
-      const filtered = clientes.filter(c => (c.nome || '').toLowerCase().includes(q) || (c.email || '').toLowerCase().includes(q));
-      this.renderTable(filtered);
-    }));
-  },
-
-  renderTable(data) {
-    const tbody = document.getElementById('cli-table-body');
-    if (!tbody) return;
-    if (data.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><p>Nenhum cliente encontrado</p></div></td></tr>';
-      return;
-    }
-    const projetos = Store.projetos.getAll();
-    tbody.innerHTML = data.map(c => {
-      const clienteProjetos = projetos.filter(p => p.clienteId === c.id);
-      return `
-        <tr class="row-clickable" onclick="ClientesModule.viewDetail('${Utils.escapeHtml(c.id)}')">
-          <td>${Utils.escapeHtml(c.nome)}</td>
-          <td class="col-hide-sm">${Utils.escapeHtml(c.email) || '—'}</td>
-          <td class="col-hide-sm">${Utils.escapeHtml(c.telefone) || '—'}</td>
-          <td class="col-hide-md" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${Utils.escapeHtml(c.endereco) || '—'}</td>
-          <td class="col-hide-md" style="font-family:'Space Grotesk',sans-serif;font-weight:600">${clienteProjetos.length}</td>
-          <td class="col-hide-sm col-actions" onclick="event.stopPropagation()">
-            <div class="table-actions">
-              <button class="btn btn-sm btn-ghost btn-icon" onclick="ClientesModule.openForm('${Utils.escapeHtml(c.id)}')" title="Editar">${Utils.icon('edit', 16)}</button>
-              <button class="btn btn-sm btn-danger btn-icon" onclick="ClientesModule.remove('${Utils.escapeHtml(c.id)}')" title="Excluir">${Utils.icon('trash', 16)}</button>
-            </div>
-          </td>
-        </tr>
-      `;
-    }).join('');
-  },
-
-  viewDetail(id) {
-    const c = Store.clientes.getById(id);
-    if (!c) return;
-    const projetos = Store.projetos.getAll().filter(p => p.clienteId === id);
-    const orcamentos = Store.orcamentos.getAll().filter(o => o.clienteId === id);
-
-    const content = `
-      <div class="detail-grid">
-        <div class="detail-row">
-          <span class="detail-label">Nome</span>
-          <span class="detail-value">${c.nome}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Email</span>
-          <span class="detail-value">${c.email || '—'}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Telefone</span>
-          <span class="detail-value">${c.telefone || '—'}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Endereço</span>
-          <span class="detail-value">${c.endereco || '—'}</span>
-        </div>
-        ${c.observacoes ? `<div class="detail-row"><span class="detail-label">Observações</span><span class="detail-value">${c.observacoes}</span></div>` : ''}
-        <div class="detail-row">
-          <span class="detail-label">Cadastrado em</span>
-          <span class="detail-value">${Utils.date(c.criadoEm)}</span>
-        </div>
-      </div>
-      ${projetos.length > 0 ? `
-        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
-          <div style="font-size:0.8rem;font-weight:600;color:var(--text-muted);margin-bottom:10px">PROJETOS (${projetos.length})</div>
-          ${projetos.map(p => `
-            <div class="detail-list-item">
-              <div>
-                <div style="font-weight:500">${p.nome}</div>
-                <div style="font-size:0.75rem;color:var(--text-muted)">${Utils.currency(p.valor)}</div>
-              </div>
-              <span class="status-badge ${Utils.statusColor(p.status)}">${Utils.statusLabel(p.status)}</span>
-            </div>
-          `).join('')}
-        </div>
-      ` : ''}
-      ${orcamentos.length > 0 ? `
-        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
-          <div style="font-size:0.8rem;font-weight:600;color:var(--text-muted);margin-bottom:10px">ORÇAMENTOS (${orcamentos.length})</div>
-          ${orcamentos.map(o => `
-            <div class="detail-list-item">
-              <div>
-                <div style="font-weight:500">${o.titulo}</div>
-                <div style="font-size:0.75rem;color:var(--text-muted)">${Utils.currency(o.total)}</div>
-              </div>
-              <span class="status-badge ${Utils.statusColor(o.status)}">${Utils.statusLabel(o.status)}</span>
-            </div>
-          `).join('')}
-        </div>
-      ` : ''}
-    `;
-
-    const overlay = Utils.modal(c.nome, content, null);
-    // Replace confirm with edit/delete buttons
-    const footer = overlay.querySelector('.dc-modal-footer');
-    footer.innerHTML = `
-      <button class="btn btn-danger btn-sm" onclick="ClientesModule.remove('${c.id}')">
-        ${Utils.icon('trash', 14)} Excluir
-      </button>
-      <button class="btn btn-ghost" onclick="this.closest('.dc-modal-overlay').remove()">Fechar</button>
-      <button class="btn btn-primary" onclick="this.closest('.dc-modal-overlay').remove();ClientesModule.openForm('${c.id}')">
-        ${Utils.icon('edit', 14)} Editar
-      </button>
     `;
   },
 
   openForm(id = null) {
-    const client = id ? Store.clientes.getById(id) : null;
-    const content = `
+    const c = id ? Store.clientes.getById(id) : null;
+    
+    const html = `
       <div class="form-group">
-        <label>Nome Completo</label>
-        <input class="form-input" id="cli-nome" value="${client?.nome || ''}" placeholder="Nome do cliente">
+        <label>Nome</label>
+        <input class="form-input" id="cli-nome" value="${Utils.escapeHtml(c?.nome || '')}" placeholder="Nome completo">
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label>Email</label>
-          <input type="email" class="form-input" id="cli-email" value="${client?.email || ''}" placeholder="email@exemplo.com">
+          <label>Telefone</label>
+          <input class="form-input" id="cli-telefone" value="${Utils.escapeHtml(c?.telefone || '')}" placeholder="(11) 99999-0000">
         </div>
         <div class="form-group">
-          <label>Telefone</label>
-          <input class="form-input" id="cli-telefone" value="${client?.telefone || ''}" placeholder="(11) 99999-0000">
+          <label>Email</label>
+          <input class="form-input" id="cli-email" value="${Utils.escapeHtml(c?.email || '')}" placeholder="email@exemplo.com">
         </div>
       </div>
       <div class="form-group">
         <label>Endereço</label>
-        <input class="form-input" id="cli-endereco" value="${client?.endereco || ''}" placeholder="Rua, número - Cidade/UF">
-      </div>
-      <div class="form-group">
-        <label>Observações</label>
-        <textarea class="form-textarea" id="cli-obs" placeholder="Anotações sobre o cliente...">${client?.observacoes || ''}</textarea>
+        <input class="form-input" id="cli-endereco" value="${Utils.escapeHtml(c?.endereco || '')}" placeholder="Rua, número - Cidade">
       </div>
     `;
 
-    Utils.modal(id ? 'Editar Cliente' : 'Novo Cliente', content, () => {
-      this.save(id);
-    });
+    Utils.modal(id ? 'Editar Cliente' : 'Novo Cliente', html, () => this.save(id));
   },
 
   save(id) {
     const nome = document.getElementById('cli-nome')?.value?.trim();
-    if (!nome) { Utils.toast('Informe o nome do cliente', 'error'); return; }
+    if (!nome) { Utils.toast('Informe o nome', 'error'); return; }
 
     const data = {
       nome,
-      email: document.getElementById('cli-email')?.value?.trim(),
       telefone: document.getElementById('cli-telefone')?.value?.trim(),
+      email: document.getElementById('cli-email')?.value?.trim(),
       endereco: document.getElementById('cli-endereco')?.value?.trim(),
-      observacoes: document.getElementById('cli-obs')?.value?.trim(),
     };
 
     if (id) {
       Store.clientes.update(id, data);
-      Utils.toast('Cliente atualizado');
+      Utils.toast('Atualizado');
     } else {
       Store.clientes.add(data);
-      Utils.toast('Cliente adicionado');
+      Utils.toast('Adicionado');
     }
 
     App.refresh();
   },
 
   async remove(id) {
-    const ok = await Utils.confirm('Deseja excluir este cliente? Projetos e orçamentos vinculados não serão removidos.');
-    if (ok) {
+    if (confirm('Excluir cliente?')) {
       Store.clientes.remove(id);
-      Utils.toast('Cliente excluído');
-      document.querySelector('.dc-modal-overlay')?.remove();
+      Utils.toast('Excluído');
       App.refresh();
     }
-  },
+  }
 };

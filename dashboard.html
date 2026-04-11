@@ -3,89 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23e85d04' rx='15' width='100' height='100'/><text y='.9em' x='50%' dominant-baseline='middle' text-anchor='middle' font-size='55' font-weight='bold' fill='white'>DC</text></svg>">
-    <title>Digital Corte — Dashboard</title>
-    <meta name="description" content="Sistema de gestão completo para marcenaria. Controle clientes, projetos, estoque e financeiro.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23e85d04' rx='20' width='100' height='100'/><circle cx='35' cy='50' r='12' fill='white'/><circle cx='65' cy='50' r='12' fill='white'/><rect x='25' y='68' width='50' height='8' rx='4' fill='white'/></svg>">
+    <title>Digital Corte</title>
+    <meta name="description" content="Sistema de gestão para marcenaria">
     <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
     <div class="app">
-        <!-- Background Ambient Animation -->
-        <div class="bg-ambient"></div>
-        
-        <!-- Sidebar Overlay (mobile) -->
-        <div class="sidebar-overlay" id="sidebarOverlay" onclick="App.closeSidebar()"></div>
-
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <a href="index.html" class="sidebar-logo">
-                    <div class="sidebar-logo-mark">DC</div>
-                    <span class="sidebar-logo-text">Digital Corte</span>
+        <!-- Top Bar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <a href="index.html" class="topbar-logo">
+                    <div class="logo-icon">DC</div>
+                    <span class="logo-text">Digital Corte</span>
+                </a>
+                
+                <nav class="icon-nav">
+                    <button class="icon-nav-btn active" data-module="dashboard" title="Dashboard">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="4" rx="1"/><rect x="14" y="10" width="7" height="11" rx="1"/><rect x="3" y="13" width="7" height="8" rx="1"/></svg>
+                    </button>
+                    <button class="icon-nav-btn" data-module="orcamentos" title="Orçamentos">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+                    </button>
+                    <button class="icon-nav-btn" data-module="clientes" title="Clientes">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                    </button>
+                    <button class="icon-nav-btn" data-module="projetos" title="Projetos">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                    </button>
+                    <button class="icon-nav-btn" data-module="estoque" title="Estoque">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8l-7-4-7 4v8l7 4 7-4z"/></svg>
+                        <span class="badge" id="estoque-alert-badge" style="display:none">0</span>
+                    </button>
+                    <button class="icon-nav-btn" data-module="financeiro" title="Financeiro">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    </button>
+                    <button class="icon-nav-btn" data-module="negociacoes" title="Negociações">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m22 8-4 4-2-2"/></svg>
+                    </button>
+                    <button class="icon-nav-btn" data-module="metricas" title="Métricas">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+                    </button>
+                </nav>
+            </div>
+            
+            <div class="topbar-right">
+                <span class="date-display" id="current-date"></span>
+                <a href="index.html" class="icon-nav-btn" title="Voltar ao site">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
                 </a>
             </div>
-            <nav class="sidebar-nav">
-                <div class="sidebar-section-label">Principal</div>
-                <button class="sidebar-link active" data-module="dashboard" id="nav-dashboard">
-                    <span class="dc-icon" style="width:20px;height:20px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="4" rx="1"/><rect x="14" y="10" width="7" height="11" rx="1"/><rect x="3" y="13" width="7" height="8" rx="1"/></svg></span>
-                    Dashboard
-                </button>
-
-                <div class="sidebar-section-label">Gestão</div>
-                <button class="sidebar-link" data-module="orcamentos" id="nav-orcamentos">
-                    <span class="dc-icon" style="width:20px;height:20px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg></span>
-                    Orçamentos
-                </button>
-                <button class="sidebar-link" data-module="clientes" id="nav-clientes">
-                    <span class="dc-icon" style="width:20px;height:20px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
-                    Clientes
-                </button>
-                <button class="sidebar-link" data-module="projetos" id="nav-projetos">
-                    <span class="dc-icon" style="width:20px;height:20px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></span>
-                    Projetos
-                </button>
-                <button class="sidebar-link" data-module="estoque" id="nav-estoque">
-                    <span class="dc-icon" style="width:20px;height:20px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.27 6.96 8.73 5.05 8.73-5.05"/><path d="M12 22.08V12"/></svg></span>
-                    Estoque
-                    <span class="badge" id="estoque-alert-badge" style="display:none">0</span>
-                </button>
-
-                <div class="sidebar-section-label">Financeiro</div>
-                <button class="sidebar-link" data-module="financeiro" id="nav-financeiro">
-                    <span class="dc-icon" style="width:20px;height:20px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
-                    Financeiro
-                </button>
-                <button class="sidebar-link" data-module="negociacoes" id="nav-negociacoes">
-                    <span class="dc-icon" style="width:20px;height:20px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m22 8-4 4-2-2"/></svg></span>
-                    Negociações
-                </button>
-                <button class="sidebar-link" data-module="metricas" id="nav-metricas">
-                    <span class="dc-icon" style="width:20px;height:20px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></span>
-                    Métricas
-                </button>
-            </nav>
-            <div class="sidebar-footer">
-                <a href="index.html" class="sidebar-link" style="color:var(--text-muted);font-size:0.8rem">
-                    ← Voltar ao site
-                </a>
-            </div>
-        </aside>
+        </header>
 
         <!-- Main Content -->
         <main class="main">
-            <header class="main-header">
-                <div class="main-header-left">
-                    <button class="mobile-menu-btn" onclick="App.toggleSidebar()" aria-label="Menu">
-                        <span class="dc-icon" style="width:24px;height:24px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></span>
-                    </button>
-                    <h2 id="page-title">Dashboard</h2>
-                </div>
-                <div class="main-header-right">
-                    <span style="font-size:0.8rem;color:var(--text-muted)" id="current-date"></span>
-                </div>
-            </header>
             <div class="main-content" id="main-content">
-                <!-- Module content rendered here by JavaScript -->
             </div>
         </main>
     </div>
