@@ -680,15 +680,15 @@ table tbody td:first-child {
 }
 
 .kpi-card {
-  background: var(--panel);
-  border: 1px solid var(--border);
+  background: linear-gradient(135deg, #221e1b 0%, #1a1715 100%);
+  border: 1px solid rgba(255, 215, 0, 0.08);
   border-radius: var(--radius);
   padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  animation: float 6s infinite ease-in-out;
-  animation-delay: calc(var(--delay, 0) * 1s);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
 }
 
 .kpi-card:hover {
