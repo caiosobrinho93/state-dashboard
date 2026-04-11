@@ -7,7 +7,6 @@ const App = {
 
   init() {
     this.cacheDom();
-    this.bindEvents();
     
     // Seed demo data
     Store.seedDemoData();
