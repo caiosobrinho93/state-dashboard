@@ -7,18 +7,31 @@
 
 /* ── Reset & Variables ── */
 :root {
-  --bg: #161311; /* User requested charcoal background */
+  --bg: #161311;
   --surface: rgba(22, 19, 17, 0.7);
+  --surface-hover: rgba(255, 255, 255, 0.04);
   --panel: rgba(30, 26, 24, 0.5);
-  --glass-border: rgba(255, 215, 0, 0.08); /* Gold accent on borders */
+  --glass-border: rgba(255, 215, 0, 0.08);
   --border: #222222;
-  --accent: #FFD700; /* Gold */
+  --border-light: #333333;
+  --accent: #FFD700;
   --accent-secondary: #FFC400;
   --accent-glow: rgba(255, 215, 0, 0.2);
+  --accent-muted: rgba(255, 215, 0, 0.1);
+  --accent-hover: #FFC400;
   --text: #ffffff;
   --text-secondary: #dddddd;
   --text-muted: #888888;
+  --success: #10b981;
+  --success-muted: rgba(16, 185, 129, 0.15);
+  --warning: #fbbf24;
+  --warning-muted: rgba(251, 191, 36, 0.15);
+  --danger: #ef4444;
+  --danger-muted: rgba(239, 68, 68, 0.15);
+  --info: #3b82f6;
+  --info-muted: rgba(59, 130, 246, 0.15);
   --radius: 16px;
+  --radius-lg: 20px;
   --sidebar-w: 260px;
   --header-h: 60px;
   --transition: 0.15s cubic-bezier(0.4, 0, 0.2, 1);

@@ -41,8 +41,8 @@ const ClientesModule = {
 
     const search = document.getElementById('cli-search');
     search?.addEventListener('input', Utils.debounce(() => {
-      const q = search.value.toLowerCase();
-      const filtered = clientes.filter(c => c.nome.toLowerCase().includes(q) || (c.email || '').toLowerCase().includes(q));
+      const q = (search.value || '').toLowerCase();
+      const filtered = clientes.filter(c => (c.nome || '').toLowerCase().includes(q) || (c.email || '').toLowerCase().includes(q));
       this.renderTable(filtered);
     }));
   },
@@ -58,16 +58,16 @@ const ClientesModule = {
     tbody.innerHTML = data.map(c => {
       const clienteProjetos = projetos.filter(p => p.clienteId === c.id);
       return `
-        <tr class="row-clickable" onclick="ClientesModule.viewDetail('${c.id}')">
-          <td>${c.nome}</td>
-          <td class="col-hide-sm">${c.email || '—'}</td>
-          <td class="col-hide-sm">${c.telefone || '—'}</td>
-          <td class="col-hide-md" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.endereco || '—'}</td>
+        <tr class="row-clickable" onclick="ClientesModule.viewDetail('${Utils.escapeHtml(c.id)}')">
+          <td>${Utils.escapeHtml(c.nome)}</td>
+          <td class="col-hide-sm">${Utils.escapeHtml(c.email) || '—'}</td>
+          <td class="col-hide-sm">${Utils.escapeHtml(c.telefone) || '—'}</td>
+          <td class="col-hide-md" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${Utils.escapeHtml(c.endereco) || '—'}</td>
           <td class="col-hide-md" style="font-family:'Space Grotesk',sans-serif;font-weight:600">${clienteProjetos.length}</td>
           <td class="col-hide-sm col-actions" onclick="event.stopPropagation()">
             <div class="table-actions">
-              <button class="btn btn-sm btn-ghost btn-icon" onclick="ClientesModule.openForm('${c.id}')" title="Editar">${Utils.icon('edit', 16)}</button>
-              <button class="btn btn-sm btn-danger btn-icon" onclick="ClientesModule.remove('${c.id}')" title="Excluir">${Utils.icon('trash', 16)}</button>
+              <button class="btn btn-sm btn-ghost btn-icon" onclick="ClientesModule.openForm('${Utils.escapeHtml(c.id)}')" title="Editar">${Utils.icon('edit', 16)}</button>
+              <button class="btn btn-sm btn-danger btn-icon" onclick="ClientesModule.remove('${Utils.escapeHtml(c.id)}')" title="Excluir">${Utils.icon('trash', 16)}</button>
             </div>
           </td>
         </tr>

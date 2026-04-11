@@ -7,13 +7,19 @@ const Store = {
     try {
       const data = localStorage.getItem(`dc_${key}`);
       return data ? JSON.parse(data) : [];
-    } catch {
+    } catch (e) {
+      console.error('Store._get error:', e);
       return [];
     }
   },
 
   _set(key, data) {
-    localStorage.setItem(`dc_${key}`, JSON.stringify(data));
+    try {
+      localStorage.setItem(`dc_${key}`, JSON.stringify(data));
+    } catch (e) {
+      console.error('Store._set error (quota exceeded?):', e);
+      Utils.toast('Erro ao salvar: armazenamento cheio', 'error');
+    }
   },
 
   _generateId() {

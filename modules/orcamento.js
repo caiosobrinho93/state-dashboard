@@ -56,17 +56,17 @@ const OrcamentoModule = {
       return;
     }
     tbody.innerHTML = data.map(o => `
-      <tr class="row-clickable" onclick="OrcamentoModule.viewDetail('${o.id}')">
-        <td>${o.titulo || '—'}</td>
-        <td class="col-hide-sm">${o.clienteNome || '—'}</td>
+      <tr class="row-clickable" onclick="OrcamentoModule.viewDetail('${Utils.escapeHtml(o.id)}')">
+        <td>${Utils.escapeHtml(o.titulo) || '—'}</td>
+        <td class="col-hide-sm">${Utils.escapeHtml(o.clienteNome) || '—'}</td>
         <td class="col-hide-sm" style="font-family:'Space Grotesk',sans-serif;font-weight:600">${Utils.currency(o.total)}</td>
         <td class="col-hide-md">${Utils.date(o.validade)}</td>
         <td class="col-hide-sm"><span class="status-badge ${Utils.statusColor(o.status)}">${Utils.statusLabel(o.status)}</span></td>
         <td class="col-hide-sm col-actions" onclick="event.stopPropagation()">
           <div class="table-actions">
-            <button class="btn btn-sm btn-ghost btn-icon" onclick="OrcamentoModule.gerarPDF('${o.id}')" title="Gerar PDF">${Utils.icon('pdf', 16)}</button>
-            <button class="btn btn-sm btn-ghost btn-icon" onclick="OrcamentoModule.openForm('${o.id}')" title="Editar">${Utils.icon('edit', 16)}</button>
-            <button class="btn btn-sm btn-danger btn-icon" onclick="OrcamentoModule.remove('${o.id}')" title="Excluir">${Utils.icon('trash', 16)}</button>
+            <button class="btn btn-sm btn-ghost btn-icon" onclick="OrcamentoModule.gerarPDF('${Utils.escapeHtml(o.id)}')" title="Gerar PDF">${Utils.icon('pdf', 16)}</button>
+            <button class="btn btn-sm btn-ghost btn-icon" onclick="OrcamentoModule.openForm('${Utils.escapeHtml(o.id)}')" title="Editar">${Utils.icon('edit', 16)}</button>
+            <button class="btn btn-sm btn-danger btn-icon" onclick="OrcamentoModule.remove('${Utils.escapeHtml(o.id)}')" title="Excluir">${Utils.icon('trash', 16)}</button>
           </div>
         </td>
       </tr>
@@ -81,11 +81,11 @@ const OrcamentoModule = {
       <div class="detail-grid">
         <div class="detail-row">
           <span class="detail-label">Título</span>
-          <span class="detail-value">${o.titulo}</span>
+          <span class="detail-value">${Utils.escapeHtml(o.titulo)}</span>
         </div>
         <div class="detail-row">
           <span class="detail-label">Cliente</span>
-          <span class="detail-value">${o.clienteNome || '—'}</span>
+          <span class="detail-value">${Utils.escapeHtml(o.clienteNome) || '—'}</span>
         </div>
         <div class="detail-row">
           <span class="detail-label">Status</span>
@@ -106,7 +106,7 @@ const OrcamentoModule = {
           ${o.itens.map(item => `
             <div class="detail-list-item">
               <div>
-                <div style="font-weight:500">${item.desc}</div>
+                <div style="font-weight:500">${Utils.escapeHtml(item.desc)}</div>
                 <div style="font-size:0.75rem;color:var(--text-muted)">${item.qtd}x ${Utils.currency(item.valor)}</div>
               </div>
               <span style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:0.9rem">${Utils.currency(item.qtd * item.valor)}</span>
@@ -116,16 +116,16 @@ const OrcamentoModule = {
       ` : ''}
     `;
 
-    const overlay = Utils.modal(o.titulo, content, null);
+    const overlay = Utils.modal(Utils.escapeHtml(o.titulo), content, null);
     const footer = overlay.querySelector('.dc-modal-footer');
     footer.innerHTML = `
-      <button class="btn btn-danger btn-sm" onclick="OrcamentoModule.remove('${o.id}')">
+      <button class="btn btn-danger btn-sm" onclick="OrcamentoModule.remove('${Utils.escapeHtml(o.id)}')">
         ${Utils.icon('trash', 14)} Excluir
       </button>
-      <button class="btn btn-ghost" onclick="this.closest('.dc-modal-overlay').remove();OrcamentoModule.gerarPDF('${o.id}')">
+      <button class="btn btn-ghost" onclick="this.closest('.dc-modal-overlay').remove();OrcamentoModule.gerarPDF('${Utils.escapeHtml(o.id)}')">
         ${Utils.icon('pdf', 14)} Gerar PDF
       </button>
-      <button class="btn btn-primary" onclick="this.closest('.dc-modal-overlay').remove();OrcamentoModule.openForm('${o.id}')">
+      <button class="btn btn-primary" onclick="this.closest('.dc-modal-overlay').remove();OrcamentoModule.openForm('${Utils.escapeHtml(o.id)}')">
         ${Utils.icon('edit', 14)} Editar
       </button>
     `;

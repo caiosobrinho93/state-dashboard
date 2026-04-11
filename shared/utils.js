@@ -3,6 +3,14 @@
 // ============================================
 
 const Utils = {
+  // Escape HTML to prevent XSS
+  escapeHtml(str) {
+    if (!str) return '';
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  },
+
   // Format currency BRL
   currency(value) {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value || 0);
@@ -11,13 +19,24 @@ const Utils = {
   // Format date
   date(dateStr) {
     if (!dateStr) return '—';
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('pt-BR');
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return '—';
+      return d.toLocaleDateString('pt-BR');
+    } catch {
+      return '—';
+    }
   },
 
   dateInput(dateStr) {
     if (!dateStr) return '';
-    return dateStr.split('T')[0];
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return '';
+      return dateStr.split('T')[0];
+    } catch {
+      return '';
+    }
   },
 
   // Relative time
@@ -173,6 +192,7 @@ const Utils = {
     download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
     eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
     menu: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>',
+    minus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>',
     close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
     arrowUp: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 15-6-6-6 6"/></svg>',
     arrowDown: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>',
@@ -201,169 +221,181 @@ const Utils = {
 
   // Simple chart helpers (Canvas-based)
   drawBarChart(canvas, data, options = {}) {
-    const ctx = canvas.getContext('2d');
-    const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-    ctx.scale(dpr, dpr);
+    try {
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
 
-    const w = rect.width;
-    const h = rect.height;
-    const padding = { top: 20, right: 20, bottom: 40, left: 60 };
-    const chartW = w - padding.left - padding.right;
-    const chartH = h - padding.top - padding.bottom;
+      const w = rect.width;
+      const h = rect.height;
+      const padding = { top: 20, right: 20, bottom: 40, left: 60 };
+      const chartW = w - padding.left - padding.right;
+      const chartH = h - padding.top - padding.bottom;
 
-    const maxVal = Math.max(...data.map(d => d.value), 1);
-    const barWidth = chartW / data.length * 0.6;
-    const gap = chartW / data.length * 0.4;
+      const maxVal = Math.max(...data.map(d => d.value), 1);
+      const barWidth = chartW / data.length * 0.6;
+      const gap = chartW / data.length * 0.4;
 
-    ctx.clearRect(0, 0, w, h);
+      ctx.clearRect(0, 0, w, h);
 
-    // Grid lines
-    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-    ctx.lineWidth = 1;
-    for (let i = 0; i <= 4; i++) {
-      const y = padding.top + (chartH / 4) * i;
-      ctx.beginPath();
-      ctx.moveTo(padding.left, y);
-      ctx.lineTo(w - padding.right, y);
-      ctx.stroke();
+      // Grid lines
+      ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 4; i++) {
+        const y = padding.top + (chartH / 4) * i;
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(w - padding.right, y);
+        ctx.stroke();
 
-      ctx.fillStyle = 'rgba(255,255,255,0.3)';
-      ctx.font = '11px Inter, sans-serif';
-      ctx.textAlign = 'right';
-      ctx.fillText(Utils.currency(maxVal - (maxVal / 4) * i).replace('R$\u00a0', ''), padding.left - 8, y + 4);
+        ctx.fillStyle = 'rgba(255,255,255,0.3)';
+        ctx.font = '11px Inter, sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText(Utils.currency(maxVal - (maxVal / 4) * i).replace('R$\u00a0', ''), padding.left - 8, y + 4);
+      }
+
+      // Bars
+      data.forEach((d, i) => {
+        const x = padding.left + (chartW / data.length) * i + gap / 2;
+        const barH = (d.value / maxVal) * chartH;
+        const y = padding.top + chartH - barH;
+
+        const gradient = ctx.createLinearGradient(x, y, x, y + barH);
+        gradient.addColorStop(0, options.color || '#ccff00');
+        gradient.addColorStop(1, options.colorEnd || 'rgba(204, 255, 0, 0.1)');
+
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.roundRect(x, y, barWidth, barH, [4, 4, 0, 0]);
+        ctx.fill();
+
+        // Label
+        ctx.fillStyle = 'rgba(255,255,255,0.4)';
+        ctx.font = '11px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(d.label, x + barWidth / 2, h - padding.bottom + 20);
+      });
+    } catch (e) {
+      console.error('drawBarChart error:', e);
     }
-
-    // Bars
-    data.forEach((d, i) => {
-      const x = padding.left + (chartW / data.length) * i + gap / 2;
-      const barH = (d.value / maxVal) * chartH;
-      const y = padding.top + chartH - barH;
-
-      const gradient = ctx.createLinearGradient(x, y, x, y + barH);
-      gradient.addColorStop(0, options.color || '#ccff00');
-      gradient.addColorStop(1, options.colorEnd || 'rgba(204, 255, 0, 0.1)');
-
-      ctx.fillStyle = gradient;
-      ctx.beginPath();
-      ctx.roundRect(x, y, barWidth, barH, [4, 4, 0, 0]);
-      ctx.fill();
-
-      // Label
-      ctx.fillStyle = 'rgba(255,255,255,0.4)';
-      ctx.font = '11px Inter, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(d.label, x + barWidth / 2, h - padding.bottom + 20);
-    });
   },
 
   drawLineChart(canvas, data, options = {}) {
-    const ctx = canvas.getContext('2d');
-    const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-    ctx.scale(dpr, dpr);
+    try {
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
 
-    const w = rect.width;
-    const h = rect.height;
-    const padding = { top: 20, right: 20, bottom: 40, left: 60 };
-    const chartW = w - padding.left - padding.right;
-    const chartH = h - padding.top - padding.bottom;
+      const w = rect.width;
+      const h = rect.height;
+      const padding = { top: 20, right: 20, bottom: 40, left: 60 };
+      const chartW = w - padding.left - padding.right;
+      const chartH = h - padding.top - padding.bottom;
 
-    const maxVal = Math.max(...data.map(d => d.value), 1);
-    ctx.clearRect(0, 0, w, h);
+      const maxVal = Math.max(...data.map(d => d.value), 1);
+      ctx.clearRect(0, 0, w, h);
 
-    // Grid
-    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-    ctx.lineWidth = 1;
-    for (let i = 0; i <= 4; i++) {
-      const y = padding.top + (chartH / 4) * i;
+      // Grid
+      ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 4; i++) {
+        const y = padding.top + (chartH / 4) * i;
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(w - padding.right, y);
+        ctx.stroke();
+      }
+
+      // Line
+      ctx.strokeStyle = options.color || '#ccff00';
+      ctx.lineWidth = 2;
+      ctx.lineJoin = 'round';
       ctx.beginPath();
-      ctx.moveTo(padding.left, y);
-      ctx.lineTo(w - padding.right, y);
+      data.forEach((d, i) => {
+        const x = padding.left + (chartW / (data.length - 1)) * i;
+        const y = padding.top + chartH - (d.value / maxVal) * chartH;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
       ctx.stroke();
-    }
 
-    // Line
-    ctx.strokeStyle = options.color || '#ccff00';
-    ctx.lineWidth = 2;
-    ctx.lineJoin = 'round';
-    ctx.beginPath();
-    data.forEach((d, i) => {
-      const x = padding.left + (chartW / (data.length - 1)) * i;
-      const y = padding.top + chartH - (d.value / maxVal) * chartH;
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    });
-    ctx.stroke();
-
-    // Fill
-    const lastX = padding.left + chartW;
-    const lastY = padding.top + chartH - (data[data.length - 1].value / maxVal) * chartH;
-    ctx.lineTo(lastX, padding.top + chartH);
-    ctx.lineTo(padding.left, padding.top + chartH);
-    ctx.closePath();
-    const gradient = ctx.createLinearGradient(0, padding.top, 0, padding.top + chartH);
-    gradient.addColorStop(0, 'rgba(204, 255, 0, 0.15)');
-    gradient.addColorStop(1, 'rgba(204, 255, 0, 0)');
-    ctx.fillStyle = gradient;
-    ctx.fill();
-
-    // Points + Labels
-    data.forEach((d, i) => {
-      const x = padding.left + (chartW / (data.length - 1)) * i;
-      const y = padding.top + chartH - (d.value / maxVal) * chartH;
-
-      ctx.fillStyle = options.color || '#ccff00';
-      ctx.beginPath();
-      ctx.arc(x, y, 3, 0, Math.PI * 2);
+      // Fill
+      const lastX = padding.left + chartW;
+      const lastY = padding.top + chartH - (data[data.length - 1].value / maxVal) * chartH;
+      ctx.lineTo(lastX, padding.top + chartH);
+      ctx.lineTo(padding.left, padding.top + chartH);
+      ctx.closePath();
+      const gradient = ctx.createLinearGradient(0, padding.top, 0, padding.top + chartH);
+      gradient.addColorStop(0, 'rgba(204, 255, 0, 0.15)');
+      gradient.addColorStop(1, 'rgba(204, 255, 0, 0)');
+      ctx.fillStyle = gradient;
       ctx.fill();
 
-      ctx.fillStyle = 'rgba(255,255,255,0.4)';
-      ctx.font = '11px Inter, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(d.label, x, h - padding.bottom + 20);
-    });
+      // Points + Labels
+      data.forEach((d, i) => {
+        const x = padding.left + (chartW / (data.length - 1)) * i;
+        const y = padding.top + chartH - (d.value / maxVal) * chartH;
+
+        ctx.fillStyle = options.color || '#ccff00';
+        ctx.beginPath();
+        ctx.arc(x, y, 3, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = 'rgba(255,255,255,0.4)';
+        ctx.font = '11px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(d.label, x, h - padding.bottom + 20);
+      });
+    } catch (e) {
+      console.error('drawLineChart error:', e);
+    }
   },
 
   drawDonutChart(canvas, data, options = {}) {
-    const ctx = canvas.getContext('2d');
-    const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-    ctx.scale(dpr, dpr);
+    try {
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
 
-    const w = rect.width;
-    const h = rect.height;
-    const cx = w / 2;
-    const cy = h / 2;
-    const radius = Math.min(w, h) / 2 - 10;
-    const innerRadius = radius * 0.65;
-    const total = data.reduce((s, d) => s + d.value, 0) || 1;
+      const w = rect.width;
+      const h = rect.height;
+      const cx = w / 2;
+      const cy = h / 2;
+      const radius = Math.min(w, h) / 2 - 10;
+      const innerRadius = radius * 0.65;
+      const total = data.reduce((s, d) => s + d.value, 0) || 1;
 
-    const colors = options.colors || ['#ccff00', '#fbff00', '#2a2a2a', '#666666', '#8b5cf6', '#ec4899'];
+      const colors = options.colors || ['#ccff00', '#fbff00', '#2a2a2a', '#666666', '#8b5cf6', '#ec4899'];
 
-    let startAngle = -Math.PI / 2;
-    data.forEach((d, i) => {
-      const sliceAngle = (d.value / total) * Math.PI * 2;
-      ctx.fillStyle = colors[i % colors.length];
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius, startAngle, startAngle + sliceAngle);
-      ctx.arc(cx, cy, innerRadius, startAngle + sliceAngle, startAngle, true);
-      ctx.closePath();
-      ctx.fill();
-      startAngle += sliceAngle;
-    });
+      let startAngle = -Math.PI / 2;
+      data.forEach((d, i) => {
+        const sliceAngle = (d.value / total) * Math.PI * 2;
+        ctx.fillStyle = colors[i % colors.length];
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, startAngle, startAngle + sliceAngle);
+        ctx.arc(cx, cy, innerRadius, startAngle + sliceAngle, startAngle, true);
+        ctx.closePath();
+        ctx.fill();
+        startAngle += sliceAngle;
+      });
 
-    // Center text
-    ctx.fillStyle = '#fafafa';
-    ctx.font = '600 18px Space Grotesk, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(options.centerText || total.toString(), cx, cy);
+      // Center text
+      ctx.fillStyle = '#fafafa';
+      ctx.font = '600 18px Space Grotesk, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(options.centerText || total.toString(), cx, cy);
+    } catch (e) {
+      console.error('drawDonutChart error:', e);
+    }
   },
 };

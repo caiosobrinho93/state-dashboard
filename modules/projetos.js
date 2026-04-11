@@ -127,7 +127,11 @@ const ProjetosModule = {
       progress = 50;
     }
 
-    const diasRestantes = p.previsao ? Math.ceil((new Date(p.previsao) - new Date()) / (1000 * 60 * 60 * 24)) : null;
+    const diasRestantes = p.previsao ? (() => {
+      try {
+        return Math.ceil((new Date(p.previsao) - new Date()) / (1000 * 60 * 60 * 24));
+      } catch { return null; }
+    })() : null;
 
     const container = document.getElementById('main-content');
     document.getElementById('page-title').textContent = p.nome;
