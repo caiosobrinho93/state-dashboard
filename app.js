@@ -6,27 +6,44 @@ const App = {
   currentModule: 'dashboard',
 
   init() {
-    // Seed demo data
-    Store.seedDemoData();
+    this.cacheDom();
+    this.bindEvents();
+    
+    // Seed demo data only if empty
+    if (!Store.orcamentos.getAll().length) {
+      Store.seedDemoData();
+    }
 
     // Update date
-    document.getElementById('current-date').textContent =
-      new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+    const dateEl = document.getElementById('current-date');
+    if (dateEl) {
+      dateEl.textContent = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+    }
 
-    // Setup navigation
+    // Navigation
     document.querySelectorAll('.sidebar-link[data-module]').forEach(link => {
-      link.addEventListener('click', () => {
-        App.navigate(link.dataset.module);
-      });
+      link.addEventListener('click', () => this.navigate(link.dataset.module));
     });
 
-    // Update estoque badge
-    this.updateEstoqueBadge();
+    // Performance: Mouse tracking for background
+    this.initBackgroundEffect();
+    
+    // Initial Render
+    this.navigate(this.currentModule);
+  },
 
-    // Load initial module from hash or default
-    const hash = window.location.hash.replace('#', '');
-    this.navigate(hash || 'dashboard');
+  initBackgroundEffect() {
+    const root = document.documentElement;
+    document.addEventListener('mousemove', (e) => {
+      // Use requestAnimationFrame for smoother performance
+      requestAnimationFrame(() => {
+        root.style.setProperty('--mouse-x', `${e.clientX}px`);
+        root.style.setProperty('--mouse-y', `${e.clientY}px`);
+      });
+    }, { passive: true });
+  },
 
+  cacheDom() {
     // Listen for hash changes
     window.addEventListener('hashchange', () => {
       const mod = window.location.hash.replace('#', '');
