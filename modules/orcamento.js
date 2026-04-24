@@ -402,8 +402,8 @@ const OrcamentoModule = {
       : '';
     
     const anotacoesHtml = orc.anotacoes 
-      ? `<div style="margin-top:15px;padding:15px;background:#1a1a1a;border-radius:8px;border-left:3px solid #fff">
-          <h4 style="font-size:9px;text-transform:uppercase;color:#999;margin-bottom:8px;letter-spacing:1px">Observações</h4>
+      ? `<div style="margin-top:15px;padding:15px;background:#2a2a2a;border-radius:8px;border-left:3px solid #d4af37">
+          <h4 style="font-size:9px;text-transform:uppercase;color:#d4af37;margin-bottom:8px;letter-spacing:1px">Observações</h4>
           <p style="font-size:10px;line-height:1.5;color:#ccc;white-space:pre-wrap">${orc.anotacoes}</p>
         </div>` 
       : '';
@@ -417,47 +417,48 @@ const OrcamentoModule = {
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { width: 210mm; height: 297mm; }
-    body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; color: #fff; background: #000; font-size: 10pt; }
-    .page { width: 210mm; height: 297mm; padding: 15mm 20mm; background: #000; overflow: hidden; }
+    :root { --gold: #d4af37; --gold-light: #f0d875; --dark: #1a1a1a; --darker: #0d0d0d; --gray: #2a2a2a; --gray-light: #3a3a3a; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; color: #fff; background: var(--dark); font-size: 10pt; }
+    .page { width: 210mm; height: 297mm; padding: 15mm 20mm; background: var(--dark); overflow: hidden; }
     @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
     @page { size: A4; margin: 0; }
-    .header { display: flex; justify-content: space-between; align-items: center; background: #000; padding: 12px 15px; margin: -15mm -20mm 15mm -20mm; border-bottom: 1px solid #333; }
+    .header { display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, var(--darker) 0%, var(--gray) 100%); padding: 12px 15px; margin: -15mm -20mm 20mm -20mm; border-bottom: 2px solid var(--gold); }
     .logo { display: flex; align-items: center; gap: 10px; }
-    .logo-mark { width: 45px; height: 45px; border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .logo-mark { width: 45px; height: 45px; border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 2px solid var(--gold); }
     .logo-mark img { width: 100%; height: 100%; object-fit: contain; }
-    .logo-text { font-size: 18px; font-weight: 700; color: #fff; }
+    .logo-text { font-size: 18px; font-weight: 700; color: var(--gold); }
     .logo-sub { font-size: 9px; color: #999; margin-top: 2px; }
     .doc-title { text-align: right; }
-    .doc-title strong { font-size: 22px; font-weight: 700; color: #fff; }
-    .doc-title .status { display: inline-block; background: #222; color: #fff; padding: 3px 10px; border-radius: 12px; font-size: 8px; font-weight: 600; margin-top: 4px; text-transform: uppercase; }
+    .doc-title strong { font-size: 22px; font-weight: 700; color: var(--gold); }
+    .doc-title .status { display: inline-block; background: var(--gold); color: var(--dark); padding: 3px 10px; border-radius: 12px; font-size: 8px; font-weight: 700; margin-top: 4px; text-transform: uppercase; }
     .doc-title .date { font-size: 9px; color: #888; display: block; margin-top: 6px; }
     .info-row { display: flex; gap: 15px; margin-bottom: 15px; }
-    .info-card { flex: 1; padding: 12px 15px; background: #111; border-radius: 6px; }
-    .info-card h4 { font-size: 8px; text-transform: uppercase; color: #666; margin-bottom: 6px; letter-spacing: 1px; }
+    .info-card { flex: 1; padding: 12px 15px; background: var(--gray); border-radius: 6px; border-left: 3px solid var(--gold); }
+    .info-card h4 { font-size: 8px; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; letter-spacing: 1px; }
     .info-card .value { font-size: 12px; font-weight: 600; color: #fff; }
     .info-card .sub { font-size: 9px; color: #888; margin-top: 2px; }
-    .items-title { font-size: 10px; font-weight: 600; color: #fff; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+    .items-title { font-size: 10px; font-weight: 600; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; border-bottom: 1px solid var(--gray-light); padding-bottom: 8px; }
     table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-    th { background: #111; font-size: 8px; text-transform: uppercase; color: #888; padding: 10px 12px; text-align: left; letter-spacing: 0.5px; font-weight: 600; border-bottom: 1px solid #333; }
-    td { padding: 10px 12px; font-size: 10px; color: #ddd; border-bottom: 1px solid #222; }
+    th { background: var(--gray); font-size: 8px; text-transform: uppercase; color: var(--gold); padding: 10px 12px; text-align: left; letter-spacing: 0.5px; font-weight: 600; border-bottom: 1px solid var(--gold); }
+    td { padding: 10px 12px; font-size: 10px; color: #ddd; border-bottom: 1px solid var(--gray-light); }
     td:last-child, th:last-child { text-align: right; }
     .item-name { font-weight: 500; color: #fff; }
     .item-qtd { color: #888; }
     .item-price { font-weight: 500; }
-    .item-total { font-weight: 600; color: #fff; }
+    .item-total { font-weight: 600; color: var(--gold-light); }
     .totals { display: flex; justify-content: flex-end; margin-bottom: 15px; }
-    .totals-card { min-width: 180px; padding: 12px 15px; background: #111; border-radius: 6px; }
+    .totals-card { min-width: 180px; padding: 15px; background: linear-gradient(135deg, var(--gray) 0%, var(--dark) 100%); border-radius: 8px; border: 1px solid var(--gold); }
     .totals-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 10px; color: #888; }
     .totals-row.subtotal { color: #888; }
     .totals-row.desconto { color: #4ade80; }
-    .totals-row.total { border-top: 1px solid #333; margin-top: 6px; padding-top: 8px; font-size: 14px; font-weight: 700; color: #fff; }
-    .footer { margin-top: 15px; padding-top: 12px; border-top: 1px solid #333; text-align: center; }
+    .totals-row.total { border-top: 2px solid var(--gold); margin-top: 8px; padding-top: 10px; font-size: 16px; font-weight: 700; color: var(--gold); }
+    .footer { margin-top: 15px; padding-top: 12px; border-top: 1px solid var(--gray-light); text-align: center; }
     .footer .contact { display: flex; justify-content: center; gap: 20px; font-size: 9px; color: #666; }
-    .footer .brand { font-size: 10px; color: #555; margin-top: 8px; }
+    .footer .brand { font-size: 10px; color: var(--gold); margin-top: 8px; }
     .imagens-section { margin-top: 15px; }
-    .imagens-section h4 { font-size: 9px; text-transform: uppercase; color: #666; margin-bottom: 8px; letter-spacing: 1px; }
+    .imagens-section h4 { font-size: 9px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; letter-spacing: 1px; }
     .imagens-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-    .imagens-grid img { border-radius: 4px; border: 1px solid #333; }
+    .imagens-grid img { border-radius: 4px; border: 1px solid var(--gold); }
   </style>
 </head>
 <body>
@@ -523,7 +524,7 @@ const OrcamentoModule = {
         <span>statemarcenaria@email.com</span>
         <span>São Paulo, SP</span>
       </div>
-      <div class="brand">STATE MARCENARIA — Móveis Planejados</div>
+      <div class="brand" style="color:var(--gold)">STATE MARCENARIA — Móveis Planejados</div>
     </div>
   </div>
 </body>
