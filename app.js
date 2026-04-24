@@ -67,6 +67,9 @@ const App = {
       metricas: MetricasModule,
     };
 
+    console.log('Modules:', Object.keys(modules));
+    console.log('OrcamentoModule:', typeof OrcamentoModule);
+    
     const mod = modules[moduleName];
     if (mod) {
       content.innerHTML = '';
