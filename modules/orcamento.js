@@ -27,6 +27,7 @@ const OrcamentoModule = {
                   <th>Cliente</th>
                   <th>Valor</th>
                   <th>Status</th>
+                  <th>Ações</th>
                 </tr>
               </thead>
               <tbody>
@@ -39,6 +40,11 @@ const OrcamentoModule = {
                       <span class="status-pill ${o.status === 'aprovado' ? 'green' : o.status === 'pendente' ? 'orange' : o.status === 'rejeitado' ? 'red' : 'blue'}">
                         ${o.status === 'aprovado' ? 'Aprovado' : o.status === 'pendente' ? 'Pendente' : o.status === 'rejeitado' ? 'Rejeitado' : 'Orçamento'}
                       </span>
+                    </td>
+                    <td onclick="event.stopPropagation()">
+                      <button class="btn btn-sm btn-ghost" onclick="OrcamentoModule.gerarPDF('${o.id}')" title="Gerar PDF">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>
+                      </button>
                     </td>
                   </tr>
                 `).join('')}
@@ -53,6 +59,13 @@ const OrcamentoModule = {
   openDetail(id) {
     const o = Store.orcamentos.getById(id);
     if (!o) return;
+
+    const itensHtml = o.itens && o.itens.length > 0 
+      ? `<div class="detail-row-mini"><span>Itens</span><div style="margin-top:4px;font-size:11px">${o.itens.map(i => `<div>${Utils.escapeHtml(i.desc)} - ${i.qtd}x ${Utils.currency(i.valor)} = ${Utils.currency(i.subtotal)}</div>`).join('')}</div></div>`
+      : '';
+    const descontoHtml = o.desconto && o.desconto > 0
+      ? `<div class="detail-row-mini"><span>Desconto</span><strong style="color:green">-${Utils.currency(o.desconto)}</strong></div>`
+      : '';
 
     const html = `
       <div style="display:flex;flex-direction:column;gap:16px">
@@ -78,6 +91,8 @@ const OrcamentoModule = {
           <span>Validade</span>
           <strong>${Utils.date(o.validade) || '—'}</strong>
         </div>
+        ${itensHtml}
+        ${descontoHtml}
         ${o.anotacoes ? `
         <div class="detail-row-mini">
           <span>Anotações</span>
@@ -98,7 +113,7 @@ const OrcamentoModule = {
     const footer = `
       <button class="btn btn-danger" onclick="OrcamentoModule.remove('${o.id}');document.querySelector('.modal-overlay').remove()">Excluir</button>
       <button class="btn btn-ghost" onclick="document.querySelector('.modal-overlay').remove()">Fechar</button>
-      <button class="btn btn-ghost" onclick="document.querySelector('.modal-overlay').remove();OrcamentoModule.gerarPDF('${o.id}')">PDF</button>
+      <button class="btn btn-primary" onclick="document.querySelector('.modal-overlay').remove();OrcamentoModule.gerarPDF('${o.id}')">PDF</button>
       <button class="btn btn-primary" onclick="document.querySelector('.modal-overlay').remove();OrcamentoModule.openForm('${o.id}')">Editar</button>
     `;
 
@@ -110,6 +125,7 @@ const OrcamentoModule = {
     const orc = id ? Store.orcamentos.getById(id) : null;
     const clientes = Store.clientes.getAll();
     const existingImagens = orc?.imagens || [];
+    const existingItens = orc?.itens || [];
     
     const html = `
       <div class="form-group">
@@ -136,13 +152,28 @@ const OrcamentoModule = {
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label>Valor (R$)</label>
-          <input type="number" class="form-input" id="orc-valor" value="${orc?.total || 0}" min="0" step="0.01">
-        </div>
-        <div class="form-group">
           <label>Validade</label>
           <input type="date" class="form-input" id="orc-validade" value="${orc?.validade || ''}">
         </div>
+        <div class="form-group">
+          <label>Desconto (R$)</label>
+          <input type="number" class="form-input" id="orc-desconto" value="${orc?.desconto || 0}" min="0" step="0.01" placeholder="0,00">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Itens do Orçamento</label>
+        <div id="orc-itens-container">
+          ${existingItens.map((item, i) => `
+            <div class="item-row" style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
+              <input type="text" class="form-input" placeholder="Descrição do item" value="${Utils.escapeHtml(item.desc)}" data-item-desc="${i}" style="flex:2">
+              <input type="number" class="form-input" placeholder="Qtd" value="${item.qtd}" data-item-qtd="${i}" min="1" step="1" style="width:60px">
+              <input type="number" class="form-input" placeholder="Valor" value="${item.valor}" data-item-valor="${i}" min="0" step="0.01" style="width:100px">
+              <span class="item-subtotal" data-item-subtotal="${i}" style="font-weight:600;min-width:80px;text-align:right">${Utils.currency(item.subtotal)}</span>
+              <button type="button" onclick="OrcamentoModule.removeItem(${i})" style="background:none;border:none;cursor:pointer;color:red;font-size:18px">×</button>
+            </div>
+          `).join('')}
+        </div>
+        <button type="button" class="btn btn-sm btn-ghost" onclick="OrcamentoModule.addItem()">+ Adicionar Item</button>
       </div>
       <div class="form-group">
         <label>Anotações</label>
@@ -193,6 +224,64 @@ const OrcamentoModule = {
       });
       this.value = '';
     });
+
+    document.querySelectorAll('[data-item-qtd], [data-item-valor]').forEach(el => {
+      el.addEventListener('input', OrcamentoModule.calcTotal);
+    });
+  },
+
+  addItem() {
+    const container = document.getElementById('orc-itens-container');
+    const idx = container.children.length;
+    const div = document.createElement('div');
+    div.className = 'item-row';
+    div.style = 'display:flex;gap:8px;margin-bottom:8px;align-items:center';
+    div.innerHTML = `
+      <input type="text" class="form-input" placeholder="Descrição do item" data-item-desc="${idx}" style="flex:2">
+      <input type="number" class="form-input" placeholder="Qtd" value="1" data-item-qtd="${idx}" min="1" step="1" style="width:60px">
+      <input type="number" class="form-input" placeholder="Valor" value="0" data-item-valor="${idx}" min="0" step="0.01" style="width:100px">
+      <span class="item-subtotal" data-item-subtotal="${idx}" style="font-weight:600;min-width:80px;text-align:right">R$ 0,00</span>
+      <button type="button" onclick="OrcamentoModule.removeItem(${idx})" style="background:none;border:none;cursor:pointer;color:red;font-size:18px">×</button>
+    `;
+    container.appendChild(div);
+    
+    div.querySelectorAll('[data-item-qtd], [data-item-valor]').forEach(el => {
+      el.addEventListener('input', OrcamentoModule.calcTotal);
+    });
+  },
+
+  removeItem(idx) {
+    const container = document.getElementById('orc-itens-container');
+    if (container && container.children[idx]) {
+      container.children[idx].remove();
+      OrcamentoModule.reindexItens();
+      OrcamentoModule.calcTotal();
+    }
+  },
+
+  reindexItens() {
+    const container = document.getElementById('orc-itens-container');
+    Array.from(container.children).forEach((row, i) => {
+      row.querySelectorAll('[data-item-desc], [data-item-qtd], [data-item-valor], [data-item-subtotal]').forEach(el => {
+        el.setAttribute(el.getAttribute('data-item-desc') ? 'data-item-desc' : 
+                      el.getAttribute('data-item-qtd') ? 'data-item-qtd' :
+                      el.getAttribute('data-item-valor') ? 'data-item-valor' : 'data-item-subtotal', i);
+      });
+    });
+  },
+
+  calcTotal() {
+    const container = document.getElementById('orc-itens-container');
+    let total = 0;
+    Array.from(container.children).forEach((row, i) => {
+      const qtd = parseFloat(row.querySelector(`[data-item-qtd="${i}"]`)?.value) || 0;
+      const valor = parseFloat(row.querySelector(`[data-item-valor="${i}"]`)?.value) || 0;
+      const subtotal = qtd * valor;
+      total += subtotal;
+      const subtotalEl = row.querySelector(`[data-item-subtotal="${i}"]`);
+      if (subtotalEl) subtotalEl.textContent = Utils.currency(subtotal);
+    });
+    return total;
   },
 
   removeImage(idx) {
@@ -218,17 +307,35 @@ const OrcamentoModule = {
     const cliente = clienteId ? Store.clientes.getById(clienteId) : null;
     const hiddenInput = document.getElementById('orc-imagens-data');
     const imagens = hiddenInput ? JSON.parse(hiddenInput.value || '[]') : [];
+    const container = document.getElementById('orc-itens-container');
+    const itens = [];
+    Array.from(container.children).forEach((row, i) => {
+      const desc = row.querySelector(`[data-item-desc="${i}"]`)?.value?.trim();
+      const qtd = parseInt(row.querySelector(`[data-item-qtd="${i}"]`)?.value) || 1;
+      const valor = parseFloat(row.querySelector(`[data-item-valor="${i}"]`)?.value) || 0;
+      const subtotal = qtd * valor;
+      if (desc || valor > 0) {
+        itens.push({ desc, qtd, valor, subtotal });
+      }
+    });
+
+    let subtotalGeral = 0;
+    itens.forEach(item => subtotalGeral += item.subtotal);
+    const desconto = parseFloat(document.getElementById('orc-desconto')?.value) || 0;
+    const total = Math.max(0, subtotalGeral - desconto);
     
     const data = {
       titulo,
       clienteId,
       clienteNome: cliente?.nome || '',
-      total: parseFloat(document.getElementById('orc-valor')?.value) || 0,
+      total,
+      subtotalGeral,
+      desconto,
       status: document.getElementById('orc-status')?.value || 'orcamento',
       validade: document.getElementById('orc-validade')?.value,
       anotacoes: document.getElementById('orc-anotacoes')?.value || '',
       imagens: imagens,
-      itens: []
+      itens: itens
     };
 
     if (id) {
@@ -268,6 +375,11 @@ const OrcamentoModule = {
           <p>${orc.anotacoes.replace(/\n/g, '<br>')}</p>
         </div>` 
       : '';
+
+    const descontoHtml = orc.desconto && orc.desconto > 0
+      ? `<tr><td colspan="3" style="text-align:right;font-weight:600">Subtotal</td><td style="text-align:right">${Utils.currency(orc.subtotalGeral)}</td></tr>
+         <tr><td colspan="3" style="text-align:right;color:green">Desconto</td><td style="text-align:right;color:green">-${Utils.currency(orc.desconto)}</td></tr>`
+      : '';
     
     const printHtml = `<!DOCTYPE html>
 <html>
@@ -297,7 +409,7 @@ const OrcamentoModule = {
     th { text-align: left; font-size: 9px; text-transform: uppercase; color: #999; padding: 12px; border-bottom: 1px solid #eee; }
     td { padding: 12px; font-size: 11px; border-bottom: 1px solid #f0f0f0; }
     td:last-child, th:last-child { text-align: right; }
-    .total { text-align: right; font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: #e85d04; }
+    .total-row { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: #e85d04; }
     .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; font-size: 9px; color: #999; }
     .imagens-section { margin-bottom: 30px; }
     .imagens-section h4 { font-size: 10px; text-transform: uppercase; color: #999; margin-bottom: 10px; }
@@ -333,10 +445,16 @@ const OrcamentoModule = {
     <table>
       <thead><tr><th>Descrição</th><th>Qtd</th><th>Valor</th><th>Total</th></tr></thead>
       <tbody>
-        ${(orc.itens && orc.itens.length > 0) ? orc.itens.map(item => `<tr><td>${item.desc}</td><td>${item.qtd}</td><td>${Utils.currency(item.valor)}</td><td>${Utils.currency(item.qtd * item.valor)}</td></tr>`).join('') : `<tr><td>${orc.titulo}</td><td>1</td><td>${Utils.currency(orc.total)}</td><td>${Utils.currency(orc.total)}</td></tr>`}
+        ${(orc.itens && orc.itens.length > 0) ? orc.itens.map(item => `<tr><td>${item.desc}</td><td>${item.qtd}</td><td>${Utils.currency(item.valor)}</td><td>${Utils.currency(item.subtotal)}</td></tr>`).join('') : `<tr><td>${orc.titulo}</td><td>1</td><td>${Utils.currency(orc.total)}</td><td>${Utils.currency(orc.total)}</td></tr>`}
+        ${descontoHtml}
       </tbody>
+      <tfoot>
+        <tr class="total-row">
+          <td colspan="3" style="text-align:right">Total</td>
+          <td>${Utils.currency(orc.total)}</td>
+        </tr>
+      </tfoot>
     </table>
-    <div class="total">Total: ${Utils.currency(orc.total)}</div>
     ${anotacoesHtml}
     ${imagensHtml}
     <div class="footer">State Marcenaria — (11) 99999-0000 — statemarcenaria@email.com</div>
