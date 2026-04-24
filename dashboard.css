@@ -1,5 +1,5 @@
 /* ===========================================
-   DIGITAL CORTE — Dashboard Styles
+   STATE MARCENARIA — Dashboard Styles
    Ultra Clean, Minimal, Icon-based
    =========================================== */
 
@@ -705,12 +705,81 @@ body {
 }
 
 /* ── Responsive ── */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .icon-nav { display: none; }
+  .mobile-nav-btn { display: flex !important; }
+  .pipeline-grid { grid-template-columns: repeat(3, 1fr); }
+  .table-minimal th:nth-child(2),
+  .table-minimal td:nth-child(2) { display: none; }
+  .main-content { padding: 0; }
+}
+
+@media (max-width: 768px) {
+  .topbar { padding: 0 12px; height: 50px; }
+  .logo-text { display: none; }
+  .logo-icon { width: 28px; height: 28px; font-size: 0.7rem; }
   .date-display { display: none; }
-  .stats-bar { gap: 8px; }
-  .stat-mini { min-width: 100px; padding: 10px 12px; }
-  .main { padding: 12px; }
+  .main { margin-top: 50px; padding: 10px; }
+  .main-content { padding: 0; }
+  
+  .stats-bar { 
+    gap: 8px; 
+    flex-wrap: nowrap; 
+    overflow-x: auto; 
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .stat-mini { min-width: 120px; flex-shrink: 0; }
+  .stat-mini-icon { width: 32px; height: 32px; }
+  .stat-mini-value { font-size: 1.1rem; }
+  
+  .section { margin-bottom: 12px; border-radius: 8px; }
+  .section-header { padding: 12px 14px; }
+  .section-title { font-size: 0.85rem; }
+  .section-body { padding: 0 14px 14px; }
+  
+  .table-minimal { font-size: 0.8rem; }
+  .table-minimal th, .table-minimal td { padding: 8px 6px; }
+  .table-minimal th:nth-child(3),
+  .table-minimal td:nth-child(3) { display: none; }
+  
+  .modal { max-width: calc(100% - 20px); max-height: 85vh; }
+  .modal-body { padding: 14px; }
+  .form-row { grid-template-columns: 1fr; }
+  .form-group { margin-bottom: 12px; }
+  .form-group label { font-size: 0.75rem; }
+  .form-input, .form-select { padding: 8px 10px; font-size: 0.85rem; }
+  
+  .btn { padding: 8px 12px; font-size: 0.8rem; }
+  .btn-primary { width: 100%; margin-top: 8px; }
+  .modal-footer { flex-wrap: wrap; }
+  .modal-footer .btn { width: auto; flex: 1; }
+  
+  .pipeline-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .pipeline-col { padding: 8px; }
+  .pipeline-col-title span { display: none; }
+}
+
+@media (max-width: 480px) {
+  .stats-bar { flex-direction: column; overflow-x: visible; }
+  .stat-mini { width: 100%; min-width: auto; }
+  .stat-mini-icon { width: 36px; height: 36px; }
+  
+  .table-minimal th:nth-child(4),
+  .table-minimal td:nth-child(4) { display: none; }
+  
+  .item-row { padding: 10px 0; gap: 6px; }
+  .item-name { font-size: 0.85rem; }
+  .item-meta { font-size: 0.7rem; }
+  .item-value { font-size: 0.8rem; display: none; }
+  
+  .pipeline-grid { grid-template-columns: 1fr; }
+  
+  .status-pill { padding: 3px 8px; font-size: 0.65rem; }
+  
+  .fab { bottom: 16px; right: 16px; width: 48px; height: 48px; }
+  
+  .toast { left: 12px; right: 12px; bottom: 12px; }
 }
 
 @media (max-width: 480px) {
@@ -866,7 +935,7 @@ body {
 /* Mobile Menu */
 .mobile-menu {
   position: fixed;
-  top: 56px;
+  top: 50px;
   left: 0;
   right: 0;
   bottom: 0;
