@@ -1,5 +1,5 @@
 // ============================================
-// DIGITAL CORTE — App Controller (Clean + Mobile)
+// STATE MARCENARIA — App Controller (Clean + Mobile)
 // ============================================
 
 const App = {
