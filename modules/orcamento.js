@@ -424,14 +424,14 @@ const OrcamentoModule = {
     @page { size: A4; margin: 0; }
     .header { display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, var(--darker) 0%, var(--gray) 100%); padding: 12px 15px; margin: -15mm -20mm 20mm -20mm; border-bottom: 2px solid var(--gold); }
     .logo { display: flex; align-items: center; gap: 10px; }
-    .logo-mark { width: 45px; height: 45px; border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 2px solid var(--gold); }
+    .logo-mark { width: 45px; height: 45px; border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
     .logo-mark img { width: 100%; height: 100%; object-fit: contain; }
     .logo-text { font-size: 18px; font-weight: 700; color: var(--gold); }
     .logo-sub { font-size: 9px; color: #999; margin-top: 2px; }
-    .doc-title { text-align: right; }
+    .doc-title { text-align: right; display: flex; flex-direction: column; align-items: flex-end; }
     .doc-title strong { font-size: 22px; font-weight: 700; color: var(--gold); }
-    .doc-title .status { display: inline-block; background: var(--gold); color: var(--dark); padding: 3px 10px; border-radius: 12px; font-size: 8px; font-weight: 700; margin-top: 4px; text-transform: uppercase; }
-    .doc-title .date { font-size: 9px; color: #888; display: block; margin-top: 6px; }
+    .doc-title .status { display: inline-block; background: var(--gold); color: var(--dark); padding: 3px 10px; border-radius: 12px; font-size: 8px; font-weight: 700; margin-top: 6px; text-transform: uppercase; }
+    .doc-title .date { font-size: 9px; color: #888; margin-top: 4px; }
     .info-row { display: flex; gap: 15px; margin-bottom: 15px; }
     .info-card { flex: 1; padding: 12px 15px; background: var(--gray); border-radius: 6px; border-left: 3px solid var(--gold); }
     .info-card h4 { font-size: 8px; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; letter-spacing: 1px; }
