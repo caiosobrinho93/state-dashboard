@@ -265,6 +265,21 @@ body {
   padding: 0 18px 18px;
 }
 
+.section.collapsed .section-body {
+  display: none;
+}
+
+.section.collapsed .section-toggle {
+  transform: rotate(-90deg);
+}
+
+.section-toggle {
+  width: 16px;
+  height: 16px;
+  color: var(--text-2);
+  transition: transform 0.2s;
+}
+
 /* Table Minimal */
 .table-minimal {
   width: 100%;

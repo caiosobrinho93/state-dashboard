@@ -1,5 +1,5 @@
 // ============================================
-// DIGITAL CORTE — Estoque (Clean)
+// STATE MARCENARIA — Estoque (Clean)
 // ============================================
 
 const EstoqueModule = {

@@ -1,5 +1,5 @@
 // ============================================
-// DIGITAL CORTE — Dashboard (Clean)
+// STATE MARCENARIA — Dashboard (Clean)
 // ============================================
 
 const DashboardModule = {

@@ -1,5 +1,5 @@
 // ============================================
-// DIGITAL CORTE — Projetos (Clean)
+// STATE MARCENARIA — Projetos (Clean)
 // ============================================
 
 const ProjetosModule = {

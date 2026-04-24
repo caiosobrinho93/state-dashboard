@@ -1,5 +1,5 @@
 // ============================================
-// DIGITAL CORTE — Clientes (Clean)
+// STATE MARCENARIA — Clientes (Clean)
 // ============================================
 
 const ClientesModule = {

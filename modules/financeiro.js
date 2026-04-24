@@ -1,5 +1,5 @@
 // ============================================
-// DIGITAL CORTE — Financeiro (Clean)
+// STATE MARCENARIA — Financeiro (Clean)
 // ============================================
 
 const FinanceiroModule = {

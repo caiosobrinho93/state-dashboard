@@ -1,5 +1,5 @@
 // ============================================
-// DIGITAL CORTE — Negociações (Clean)
+// STATE MARCENARIA — Negociações (Clean)
 // ============================================
 
 const NegociacoesModule = {

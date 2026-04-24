@@ -1,5 +1,5 @@
 // ============================================
-// DIGITAL CORTE — Métricas (Clean)
+// STATE MARCENARIA — Métricas (Clean)
 // ============================================
 
 const MetricasModule = {
