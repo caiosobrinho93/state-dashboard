@@ -359,7 +359,7 @@ const OrcamentoModule = {
     const orc = Store.orcamentos.getById(id);
     if (!orc) return;
     
-    const logoSrc = 'E:/STATE MARCENARIA/logo-state.png';
+    const logoSrc = 'logo-state.png';
     const imagensHtml = orc.imagens && orc.imagens.length > 0 
       ? `<div class="imagens-section">
           <h4>Imagens de Referência</h4>
@@ -378,7 +378,7 @@ const OrcamentoModule = {
 
     const descontoHtml = orc.desconto && orc.desconto > 0
       ? `<tr><td colspan="3" style="text-align:right;font-weight:600">Subtotal</td><td style="text-align:right">${Utils.currency(orc.subtotalGeral)}</td></tr>
-         <tr><td colspan="3" style="text-align:right;color:green">Desconto</td><td style="text-align:right;color:green">-${Utils.currency(orc.desconto)}</td></tr>`
+         <tr><td colspan="3" style="text-align:right;color:#22c55e">Desconto</td><td style="text-align:right;color:#22c55e">-${Utils.currency(orc.desconto)}</td></tr>`
       : '';
     
     const printHtml = `<!DOCTYPE html>
@@ -387,37 +387,58 @@ const OrcamentoModule = {
   <meta charset="UTF-8">
   <title>Orçamento - ${orc.titulo}</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', sans-serif; color: #1a1a1a; background: #fff; font-size: 11pt; }
-    .page { width: 210mm; min-height: 297mm; padding: 40mm; }
-    .header { display: flex; justify-content: space-between; margin-bottom: 40px; background: #1a1a1a; padding: 20px; margin: -40mm -40mm 40mm -40mm; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; color: #1e293b; background: #f8fafc; font-size: 11pt; }
+    .page { width: 210mm; min-height: 297mm; padding: 30mm 35mm; background: #fff; box-shadow: 0 0 40px rgba(0,0,0,0.1); margin: 20px auto; }
+    .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 25px; border-bottom: 2px solid #f1f5f9; margin-bottom: 30px; }
     .logo { display: flex; align-items: center; gap: 12px; }
-    .logo-mark { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .logo-mark { width: 50px; height: 50px; border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
     .logo-mark img { width: 100%; height: 100%; object-fit: contain; }
-    .logo-text { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; color: #fff; }
-    .logo-sub { font-size: 10px; color: #999; }
-    .doc-title { text-align: right; color: #fff; }
-    .doc-title strong { font-family: 'Space Grotesk', sans-serif; font-size: 24px; display: block; margin-bottom: 4px; }
-    .doc-title span { font-size: 11px; color: #999; }
-    .client { margin-bottom: 30px; padding: 20px; background: #f8f8f8; border-radius: 8px; }
-    .client h4 { font-size: 10px; text-transform: uppercase; color: #999; margin-bottom: 10px; }
-    .client-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 11px; }
-    .client-grid span { color: #666; }
-    .client-grid strong { color: #1a1a1a; }
-    table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
-    th { text-align: left; font-size: 9px; text-transform: uppercase; color: #999; padding: 12px; border-bottom: 1px solid #eee; }
-    td { padding: 12px; font-size: 11px; border-bottom: 1px solid #f0f0f0; }
-    td:last-child, th:last-child { text-align: right; }
-    .total-row { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: #e85d04; }
-    .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; font-size: 9px; color: #999; }
-    .imagens-section { margin-bottom: 30px; }
-    .imagens-section h4 { font-size: 10px; text-transform: uppercase; color: #999; margin-bottom: 10px; }
+    .logo-text { font-size: 20px; font-weight: 700; color: #0f172a; letter-spacing: -0.5px; }
+    .logo-sub { font-size: 10px; color: #64748b; margin-top: 2px; }
+    .doc-title { text-align: right; }
+    .doc-title strong { font-size: 28px; font-weight: 700; color: #0f172a; letter-spacing: -1px; }
+    .doc-title .badge { display: inline-block; background: #f0fdf4; color: #16a34a; padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 600; margin-top: 6px; }
+    .doc-title span { font-size: 11px; color: #64748b; display: block; margin-top: 8px; }
+    .client { margin-bottom: 30px; display: flex; gap: 30px; }
+    .client-card { flex: 1; padding: 20px; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius: 12px; border: 1px solid #e2e8f0; }
+    .client-card h4 { font-size: 9px; text-transform: uppercase; color: #94a3b8; margin-bottom: 12px; letter-spacing: 1px; }
+    .client-card .name { font-size: 16px; font-weight: 600; color: #0f172a; }
+    .client-card .info { font-size: 11px; color: #64748b; margin-top: 4px; }
+    .items-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .items-header h3 { font-size: 12px; font-weight: 600; color: #0f172a; text-transform: uppercase; letter-spacing: 1px; }
+    .items-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .items-table th { background: #f8fafc; font-size: 9px; text-transform: uppercase; color: #64748b; padding: 14px 16px; text-align: left; letter-spacing: 0.5px; font-weight: 600; border-bottom: 1px solid #e2e8f0; }
+    .items-table td { padding: 14px 16px; font-size: 11px; color: #334155; border-bottom: 1px solid #f1f5f9; }
+    .items-table td:last-child, .items-table th:last-child { text-align: right; }
+    .items-table tr:last-child td { border-bottom: none; }
+    .items-table .item-name { font-weight: 500; color: #0f172a; }
+    .items-table .item-qtd { color: #64748b; }
+    .items-table .item-price { font-weight: 500; }
+    .items-table .item-total { font-weight: 600; color: #0f172a; }
+    .totals { display: flex; justify-content: flex-end; margin-bottom: 30px; }
+    .totals-card { width: 280px; padding: 20px; background: #f8fafc; border-radius: 12px; }
+    .totals-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 11px; }
+    .totals-row.subtotal { color: #64748b; }
+    .totals-row.desconto { color: #22c55e; }
+    .totals-row.total { border-top: 2px solid #e2e8f0; margin-top: 8px; padding-top: 12px; font-size: 18px; font-weight: 700; color: #0f172a; }
+    .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #f1f5f9; text-align: center; }
+    .footer .contact { display: flex; justify-content: center; gap: 20px; font-size: 10px; color: #64748b; }
+    .footer .contact span { display: flex; align-items: center; gap: 4px; }
+    .footer .brand { font-size: 11px; color: #94a3b8; margin-top: 12px; }
+    .imagens-section { margin-top: 30px; }
+    .imagens-section h4 { font-size: 10px; text-transform: uppercase; color: #94a3b8; margin-bottom: 12px; letter-spacing: 1px; }
     .imagens-grid { display: flex; flex-wrap: wrap; gap: 10px; }
-    .imagens-grid img { border: 1px solid #eee; }
-    .anotacoes { margin-bottom: 30px; padding: 20px; background: #f8f8f8; border-radius: 8px; }
-    .anotacoes h4 { font-size: 10px; text-transform: uppercase; color: #999; margin-bottom: 10px; }
-    .anotacoes p { font-size: 11px; line-height: 1.5; }
+    .imagens-grid img { border-radius: 8px; border: 1px solid #e2e8f0; }
+    .anotacoes { margin-top: 30px; padding: 20px; background: #f8fafc; border-radius: 12px; border-left: 3px solid #0f172a; }
+    .anotacoes h4 { font-size: 10px; text-transform: uppercase; color: #94a3b8; margin-bottom: 10px; letter-spacing: 1px; }
+    .anotacoes p { font-size: 11px; line-height: 1.6; color: #334155; white-space: pre-wrap; }
+    .status-badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .status-orcamento { background: #e0f2fe; color: #0284c7; }
+    .status-pendente { background: #fef3c7; color: #d97706; }
+    .status-aprovado { background: #dcfce7; color: #16a34a; }
+    .status-rejeitado { background: #fee2e2; color: #dc2626; }
   </style>
 </head>
 <body>
@@ -427,37 +448,71 @@ const OrcamentoModule = {
         <div class="logo-mark"><img src="${logoSrc}" alt="Logo"></div>
         <div>
           <div class="logo-text">STATE MARCENARIA</div>
-          <div class="logo-sub">Marcenaria & Móveis Planejados</div>
+          <div class="logo-sub">Móveis Planejados & Design de Interiores</div>
         </div>
       </div>
       <div class="doc-title">
         <strong>ORÇAMENTO</strong>
-        <span>${Utils.date(orc.criadoEm)} • Val: ${Utils.date(orc.validade) || '30 dias'}</span>
+        <span class="status-badge status-${orc.status || 'orcamento'}">${orc.status === 'aprovado' ? 'Aprovado' : orc.status === 'pendente' ? 'Pendente' : orc.status === 'rejeitado' ? 'Rejeitado' : 'Orçamento'}</span>
+        <span>${Utils.date(orc.criadoEm)} • Válido até: ${Utils.date(orc.validade) || '30 dias'}</span>
       </div>
     </div>
     <div class="client">
-      <h4>Cliente</h4>
-      <div class="client-grid">
-        <div><span>Nome:</span> <strong>${orc.clienteNome || '—'}</strong></div>
-        <div><span>Data:</span> <strong>${Utils.date(orc.criadoEm)}</strong></div>
+      <div class="client-card">
+        <h4>Cliente</h4>
+        <div class="name">${orc.clienteNome || '—'}</div>
+        <div class="info">${orc.titulo}</div>
+      </div>
+      <div class="client-card">
+        <h4>Data</h4>
+        <div class="name">${Utils.date(orc.criadoEm)}</div>
+        <div class="info">Orçamento #${orc.id?.slice(-6) || ''}</div>
       </div>
     </div>
-    <table>
-      <thead><tr><th>Descrição</th><th>Qtd</th><th>Valor</th><th>Total</th></tr></thead>
+    <div class="items-header">
+      <h3>Itens do Orçamento</h3>
+    </div>
+    <table class="items-table">
+      <thead><tr><th>Descrição</th><th>Qtd</th><th>Valor Unit.</th><th>Total</th></tr></thead>
       <tbody>
-        ${(orc.itens && orc.itens.length > 0) ? orc.itens.map(item => `<tr><td>${item.desc}</td><td>${item.qtd}</td><td>${Utils.currency(item.valor)}</td><td>${Utils.currency(item.subtotal)}</td></tr>`).join('') : `<tr><td>${orc.titulo}</td><td>1</td><td>${Utils.currency(orc.total)}</td><td>${Utils.currency(orc.total)}</td></tr>`}
-        ${descontoHtml}
+        ${(orc.itens && orc.itens.length > 0) ? orc.itens.map(item => `<tr><td class="item-name">${item.desc}</td><td class="item-qtd">${item.qtd}</td><td class="item-price">${Utils.currency(item.valor)}</td><td class="item-total">${Utils.currency(item.subtotal)}</td></tr>`).join('') : `<tr><td class="item-name">${orc.titulo}</td><td class="item-qtd">1</td><td class="item-price">${Utils.currency(orc.total)}</td><td class="item-total">${Utils.currency(orc.total)}</td></tr>`}
       </tbody>
-      <tfoot>
-        <tr class="total-row">
-          <td colspan="3" style="text-align:right">Total</td>
-          <td>${Utils.currency(orc.total)}</td>
-        </tr>
-      </tfoot>
     </table>
+    <div class="totals">
+      <div class="totals-card">
+        <div class="totals-row subtotal">
+          <span>Subtotal</span>
+          <span>${Utils.currency(orc.subtotalGeral || orc.total)}</span>
+        </div>
+        ${orc.desconto && orc.desconto > 0 ? `<div class="totals-row desconto">
+          <span>Desconto</span>
+          <span>-${Utils.currency(orc.desconto)}</span>
+        </div>` : ''}
+        <div class="totals-row total">
+          <span>Total</span>
+          <span>${Utils.currency(orc.total)}</span>
+        </div>
+      </div>
+    </div>
     ${anotacoesHtml}
     ${imagensHtml}
-    <div class="footer">State Marcenaria — (11) 99999-0000 — statemarcenaria@email.com</div>
+    <div class="footer">
+      <div class="contact">
+        <span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.71 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.71.7A2 2 0 0 1 22 16.92z"/></svg>
+          (11) 99999-0000
+        </span>
+        <span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          statemarcenaria@email.com
+        </span>
+        <span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          São Paulo, SP
+        </span>
+      </div>
+      <div class="brand">STATE MARCENARIA — Móveis Planejados & Design de Interiores</div>
+    </div>
   </div>
 </body>
 </html>`;
