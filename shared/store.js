@@ -1,5 +1,5 @@
 // ============================================
-// DIGITAL CORTE — Data Store (localStorage)
+// STATE MARCENARIA — Data Store (localStorage)
 // ============================================
 
 const Store = {
