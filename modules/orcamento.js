@@ -308,14 +308,46 @@ const OrcamentoModule = {
     const hiddenInput = document.getElementById('orc-imagens-data');
     const imagens = hiddenInput ? JSON.parse(hiddenInput.value || '[]') : [];
     const container = document.getElementById('orc-itens-container');
+    
+    if (!container) {
+      const data = {
+        titulo,
+        clienteId,
+        clienteNome: cliente?.nome || '',
+        total: 0,
+        subtotalGeral: 0,
+        desconto: 0,
+        status: document.getElementById('orc-status')?.value || 'orcamento',
+        validade: document.getElementById('orc-validade')?.value,
+        anotacoes: '',
+        imagens: imagens,
+        itens: []
+      };
+      if (id) {
+        Store.orcamentos.update(id, data);
+        Utils.toast('Atualizado');
+      } else {
+        Store.orcamentos.add(data);
+        Utils.toast('Criado');
+      }
+      App.refresh();
+      return;
+    }
+
     const itens = [];
     Array.from(container.children).forEach((row, i) => {
-      const desc = row.querySelector(`[data-item-desc="${i}"]`)?.value?.trim();
-      const qtd = parseInt(row.querySelector(`[data-item-qtd="${i}"]`)?.value) || 1;
-      const valor = parseFloat(row.querySelector(`[data-item-valor="${i}"]`)?.value) || 0;
-      const subtotal = qtd * valor;
-      if (desc || valor > 0) {
-        itens.push({ desc, qtd, valor, subtotal });
+      const descInput = row.querySelector(`[data-item-desc="${i}"]`);
+      const qtdInput = row.querySelector(`[data-item-qtd="${i}"]`);
+      const valorInput = row.querySelector(`[data-item-valor="${i}"]`);
+      
+      if (descInput && qtdInput && valorInput) {
+        const desc = descInput.value?.trim();
+        const qtd = parseInt(qtdInput.value) || 1;
+        const valor = parseFloat(valorInput.value) || 0;
+        const subtotal = qtd * valor;
+        if (desc || valor > 0) {
+          itens.push({ desc, qtd, valor, subtotal });
+        }
       }
     });
 
@@ -362,23 +394,18 @@ const OrcamentoModule = {
     const logoSrc = 'logo-state.png';
     const imagensHtml = orc.imagens && orc.imagens.length > 0 
       ? `<div class="imagens-section">
-          <h4>Imagens de Referência</h4>
-          <div class="imagens-grid">
-            ${orc.imagens.map(img => `<img src="${img}" style="max-width:200px;max-height:200px;object-fit:contain;border-radius:4px">`).join('')}
+          <h4 style="font-size:9px;text-transform:uppercase;color:#fff;margin-bottom:8px;letter-spacing:1px">Imagens de Referência</h4>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            ${orc.imagens.map(img => `<img src="${img}" style="width:100px;height:100px;object-fit:cover;border-radius:4px;border:1px solid #333">`).join('')}
           </div>
         </div>` 
       : '';
     
     const anotacoesHtml = orc.anotacoes 
-      ? `<div class="anotacoes">
-          <h4>Observações</h4>
-          <p>${orc.anotacoes.replace(/\n/g, '<br>')}</p>
+      ? `<div style="margin-top:15px;padding:15px;background:#1a1a1a;border-radius:8px;border-left:3px solid #fff">
+          <h4 style="font-size:9px;text-transform:uppercase;color:#999;margin-bottom:8px;letter-spacing:1px">Observações</h4>
+          <p style="font-size:10px;line-height:1.5;color:#ccc;white-space:pre-wrap">${orc.anotacoes}</p>
         </div>` 
-      : '';
-
-    const descontoHtml = orc.desconto && orc.desconto > 0
-      ? `<tr><td colspan="3" style="text-align:right;font-weight:600">Subtotal</td><td style="text-align:right">${Utils.currency(orc.subtotalGeral)}</td></tr>
-         <tr><td colspan="3" style="text-align:right;color:#22c55e">Desconto</td><td style="text-align:right;color:#22c55e">-${Utils.currency(orc.desconto)}</td></tr>`
       : '';
     
     const printHtml = `<!DOCTYPE html>
@@ -389,56 +416,46 @@ const OrcamentoModule = {
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Plus Jakarta Sans', sans-serif; color: #1e293b; background: #f8fafc; font-size: 11pt; }
-    .page { width: 210mm; min-height: 297mm; padding: 30mm 35mm; background: #fff; box-shadow: 0 0 40px rgba(0,0,0,0.1); margin: 20px auto; }
-    .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 25px; border-bottom: 2px solid #f1f5f9; margin-bottom: 30px; }
-    .logo { display: flex; align-items: center; gap: 12px; }
-    .logo-mark { width: 50px; height: 50px; border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    html, body { width: 210mm; height: 297mm; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; color: #fff; background: #000; font-size: 10pt; }
+    .page { width: 210mm; height: 297mm; padding: 15mm 20mm; background: #000; }
+    .header { display: flex; justify-content: space-between; align-items: center; background: #000; padding: 12px 15px; margin: -15mm -20mm 15mm -20mm; border-bottom: 1px solid #333; }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo-mark { width: 45px; height: 45px; border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
     .logo-mark img { width: 100%; height: 100%; object-fit: contain; }
-    .logo-text { font-size: 20px; font-weight: 700; color: #0f172a; letter-spacing: -0.5px; }
-    .logo-sub { font-size: 10px; color: #64748b; margin-top: 2px; }
+    .logo-text { font-size: 18px; font-weight: 700; color: #fff; }
+    .logo-sub { font-size: 9px; color: #999; margin-top: 2px; }
     .doc-title { text-align: right; }
-    .doc-title strong { font-size: 28px; font-weight: 700; color: #0f172a; letter-spacing: -1px; }
-    .doc-title .badge { display: inline-block; background: #f0fdf4; color: #16a34a; padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 600; margin-top: 6px; }
-    .doc-title span { font-size: 11px; color: #64748b; display: block; margin-top: 8px; }
-    .client { margin-bottom: 30px; display: flex; gap: 30px; }
-    .client-card { flex: 1; padding: 20px; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius: 12px; border: 1px solid #e2e8f0; }
-    .client-card h4 { font-size: 9px; text-transform: uppercase; color: #94a3b8; margin-bottom: 12px; letter-spacing: 1px; }
-    .client-card .name { font-size: 16px; font-weight: 600; color: #0f172a; }
-    .client-card .info { font-size: 11px; color: #64748b; margin-top: 4px; }
-    .items-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .items-header h3 { font-size: 12px; font-weight: 600; color: #0f172a; text-transform: uppercase; letter-spacing: 1px; }
-    .items-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-    .items-table th { background: #f8fafc; font-size: 9px; text-transform: uppercase; color: #64748b; padding: 14px 16px; text-align: left; letter-spacing: 0.5px; font-weight: 600; border-bottom: 1px solid #e2e8f0; }
-    .items-table td { padding: 14px 16px; font-size: 11px; color: #334155; border-bottom: 1px solid #f1f5f9; }
-    .items-table td:last-child, .items-table th:last-child { text-align: right; }
-    .items-table tr:last-child td { border-bottom: none; }
-    .items-table .item-name { font-weight: 500; color: #0f172a; }
-    .items-table .item-qtd { color: #64748b; }
-    .items-table .item-price { font-weight: 500; }
-    .items-table .item-total { font-weight: 600; color: #0f172a; }
-    .totals { display: flex; justify-content: flex-end; margin-bottom: 30px; }
-    .totals-card { width: 280px; padding: 20px; background: #f8fafc; border-radius: 12px; }
-    .totals-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 11px; }
-    .totals-row.subtotal { color: #64748b; }
-    .totals-row.desconto { color: #22c55e; }
-    .totals-row.total { border-top: 2px solid #e2e8f0; margin-top: 8px; padding-top: 12px; font-size: 18px; font-weight: 700; color: #0f172a; }
-    .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #f1f5f9; text-align: center; }
-    .footer .contact { display: flex; justify-content: center; gap: 20px; font-size: 10px; color: #64748b; }
-    .footer .contact span { display: flex; align-items: center; gap: 4px; }
-    .footer .brand { font-size: 11px; color: #94a3b8; margin-top: 12px; }
-    .imagens-section { margin-top: 30px; }
-    .imagens-section h4 { font-size: 10px; text-transform: uppercase; color: #94a3b8; margin-bottom: 12px; letter-spacing: 1px; }
-    .imagens-grid { display: flex; flex-wrap: wrap; gap: 10px; }
-    .imagens-grid img { border-radius: 8px; border: 1px solid #e2e8f0; }
-    .anotacoes { margin-top: 30px; padding: 20px; background: #f8fafc; border-radius: 12px; border-left: 3px solid #0f172a; }
-    .anotacoes h4 { font-size: 10px; text-transform: uppercase; color: #94a3b8; margin-bottom: 10px; letter-spacing: 1px; }
-    .anotacoes p { font-size: 11px; line-height: 1.6; color: #334155; white-space: pre-wrap; }
-    .status-badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-    .status-orcamento { background: #e0f2fe; color: #0284c7; }
-    .status-pendente { background: #fef3c7; color: #d97706; }
-    .status-aprovado { background: #dcfce7; color: #16a34a; }
-    .status-rejeitado { background: #fee2e2; color: #dc2626; }
+    .doc-title strong { font-size: 22px; font-weight: 700; color: #fff; }
+    .doc-title .status { display: inline-block; background: #222; color: #fff; padding: 3px 10px; border-radius: 12px; font-size: 8px; font-weight: 600; margin-top: 4px; text-transform: uppercase; }
+    .doc-title .date { font-size: 9px; color: #888; display: block; margin-top: 6px; }
+    .info-row { display: flex; gap: 15px; margin-bottom: 15px; }
+    .info-card { flex: 1; padding: 12px 15px; background: #111; border-radius: 6px; }
+    .info-card h4 { font-size: 8px; text-transform: uppercase; color: #666; margin-bottom: 6px; letter-spacing: 1px; }
+    .info-card .value { font-size: 12px; font-weight: 600; color: #fff; }
+    .info-card .sub { font-size: 9px; color: #888; margin-top: 2px; }
+    .items-title { font-size: 10px; font-weight: 600; color: #fff; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+    th { background: #111; font-size: 8px; text-transform: uppercase; color: #888; padding: 10px 12px; text-align: left; letter-spacing: 0.5px; font-weight: 600; border-bottom: 1px solid #333; }
+    td { padding: 10px 12px; font-size: 10px; color: #ddd; border-bottom: 1px solid #222; }
+    td:last-child, th:last-child { text-align: right; }
+    .item-name { font-weight: 500; color: #fff; }
+    .item-qtd { color: #888; }
+    .item-price { font-weight: 500; }
+    .item-total { font-weight: 600; color: #fff; }
+    .totals { display: flex; justify-content: flex-end; margin-bottom: 15px; }
+    .totals-card { min-width: 180px; padding: 12px 15px; background: #111; border-radius: 6px; }
+    .totals-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 10px; color: #888; }
+    .totals-row.subtotal { color: #888; }
+    .totals-row.desconto { color: #4ade80; }
+    .totals-row.total { border-top: 1px solid #333; margin-top: 6px; padding-top: 8px; font-size: 14px; font-weight: 700; color: #fff; }
+    .footer { margin-top: 15px; padding-top: 12px; border-top: 1px solid #333; text-align: center; }
+    .footer .contact { display: flex; justify-content: center; gap: 20px; font-size: 9px; color: #666; }
+    .footer .brand { font-size: 10px; color: #555; margin-top: 8px; }
+    .imagens-section { margin-top: 15px; }
+    .imagens-section h4 { font-size: 9px; text-transform: uppercase; color: #666; margin-bottom: 8px; letter-spacing: 1px; }
+    .imagens-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .imagens-grid img { border-radius: 4px; border: 1px solid #333; }
   </style>
 </head>
 <body>
@@ -448,31 +465,33 @@ const OrcamentoModule = {
         <div class="logo-mark"><img src="${logoSrc}" alt="Logo"></div>
         <div>
           <div class="logo-text">STATE MARCENARIA</div>
-          <div class="logo-sub">Móveis Planejados & Design de Interiores</div>
+          <div class="logo-sub">Móveis Planejados</div>
         </div>
       </div>
       <div class="doc-title">
         <strong>ORÇAMENTO</strong>
-        <span class="status-badge status-${orc.status || 'orcamento'}">${orc.status === 'aprovado' ? 'Aprovado' : orc.status === 'pendente' ? 'Pendente' : orc.status === 'rejeitado' ? 'Rejeitado' : 'Orçamento'}</span>
-        <span>${Utils.date(orc.criadoEm)} • Válido até: ${Utils.date(orc.validade) || '30 dias'}</span>
+        <span class="status">${orc.status === 'aprovado' ? 'Aprovado' : orc.status === 'pendente' ? 'Pendente' : orc.status === 'rejeitado' ? 'Rejeitado' : 'Orçamento'}</span>
+        <span class="date">${Utils.date(orc.criadoEm)} • Válido: ${Utils.date(orc.validade) || '30 dias'}</span>
       </div>
     </div>
-    <div class="client">
-      <div class="client-card">
+    <div class="info-row">
+      <div class="info-card" style="flex:2">
         <h4>Cliente</h4>
-        <div class="name">${orc.clienteNome || '—'}</div>
-        <div class="info">${orc.titulo}</div>
+        <div class="value">${orc.clienteNome || '—'}</div>
+        <div class="sub">${orc.titulo}</div>
       </div>
-      <div class="client-card">
+      <div class="info-card">
         <h4>Data</h4>
-        <div class="name">${Utils.date(orc.criadoEm)}</div>
-        <div class="info">Orçamento #${orc.id?.slice(-6) || ''}</div>
+        <div class="value">${Utils.date(orc.criadoEm)}</div>
+        <div class="sub">#${orc.id?.slice(-6) || ''}</div>
+      </div>
+      <div class="info-card">
+        <h4>Validade</h4>
+        <div class="value">${Utils.date(orc.validade) || '30 dias'}</div>
       </div>
     </div>
-    <div class="items-header">
-      <h3>Itens do Orçamento</h3>
-    </div>
-    <table class="items-table">
+    <div class="items-title">Itens do Orçamento</div>
+    <table>
       <thead><tr><th>Descrição</th><th>Qtd</th><th>Valor Unit.</th><th>Total</th></tr></thead>
       <tbody>
         ${(orc.itens && orc.itens.length > 0) ? orc.itens.map(item => `<tr><td class="item-name">${item.desc}</td><td class="item-qtd">${item.qtd}</td><td class="item-price">${Utils.currency(item.valor)}</td><td class="item-total">${Utils.currency(item.subtotal)}</td></tr>`).join('') : `<tr><td class="item-name">${orc.titulo}</td><td class="item-qtd">1</td><td class="item-price">${Utils.currency(orc.total)}</td><td class="item-total">${Utils.currency(orc.total)}</td></tr>`}
@@ -498,20 +517,11 @@ const OrcamentoModule = {
     ${imagensHtml}
     <div class="footer">
       <div class="contact">
-        <span>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.71 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.71.7A2 2 0 0 1 22 16.92z"/></svg>
-          (11) 99999-0000
-        </span>
-        <span>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          statemarcenaria@email.com
-        </span>
-        <span>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          São Paulo, SP
-        </span>
+        <span>(11) 99999-0000</span>
+        <span>statemarcenaria@email.com</span>
+        <span>São Paulo, SP</span>
       </div>
-      <div class="brand">STATE MARCENARIA — Móveis Planejados & Design de Interiores</div>
+      <div class="brand">STATE MARCENARIA — Móveis Planejados</div>
     </div>
   </div>
 </body>
